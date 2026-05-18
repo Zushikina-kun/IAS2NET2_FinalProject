@@ -79,7 +79,16 @@ def load_members():
         if not os.path.exists(MEMBERS_FILE):
             return []
         with open(MEMBERS_FILE, "r") as f:
-            return json.load(f)
+            members = json.load(f)
+        # Ensure all members have the expected keys (migration for older records)
+        defaults = {"gender": "", "birthday": "", "address": "",
+                    "emergency_contact": "", "notes": "", "total_visits": 0,
+                    "registered_at": ""}
+        for m in members:
+            for key, val in defaults.items():
+                if key not in m:
+                    m[key] = val
+        return members
 
 
 def save_members(members):

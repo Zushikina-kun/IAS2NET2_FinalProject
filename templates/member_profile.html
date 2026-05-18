@@ -282,15 +282,15 @@
             </div>
             <div class="detail-row">
                 <span class="label">Gender</span>
-                <span class="value">{{ member.gender or '—' }}</span>
+                <span class="value">{{ member.get('gender', '—') or '—' }}</span>
             </div>
             <div class="detail-row">
                 <span class="label">Birthday</span>
-                <span class="value">{{ member.birthday or '—' }}</span>
+                <span class="value">{{ member.get('birthday', '—') or '—' }}</span>
             </div>
             <div class="detail-row">
                 <span class="label">Address</span>
-                <span class="value">{{ member.address or '—' }}</span>
+                <span class="value">{{ member.get('address', '—') or '—' }}</span>
             </div>
             <div class="detail-row">
                 <span class="label">Notes</span>

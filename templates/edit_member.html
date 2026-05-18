@@ -178,23 +178,23 @@
                 <div class="field">
                     <label for="gender">Gender</label>
                     <select id="gender" name="gender">
-                        <option value="" {% if not member.gender %}selected{% endif %}>— Select —</option>
-                        <option value="Male" {% if member.gender == 'Male' %}selected{% endif %}>Male</option>
-                        <option value="Female" {% if member.gender == 'Female' %}selected{% endif %}>Female</option>
-                        <option value="Other" {% if member.gender == 'Other' %}selected{% endif %}>Other</option>
+                        <option value="" {% if not member.get('gender') %}selected{% endif %}>— Select —</option>
+                        <option value="Male" {% if member.get('gender') == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if member.get('gender') == 'Female' %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if member.get('gender') == 'Other' %}selected{% endif %}>Other</option>
                     </select>
                 </div>
                 <div class="field">
                     <label for="birthday">Birthday</label>
                     <input type="date" id="birthday" name="birthday"
-                           value="{{ member.birthday or '' }}">
+                           value="{{ member.get('birthday', '') }}">
                 </div>
             </div>
 
             <div class="field">
                 <label for="address">Address / Location</label>
                 <input type="text" id="address" name="address"
-                       value="{{ member.address or '' }}"
+                       value="{{ member.get('address', '') }}"
                        placeholder="e.g. 123 Main St, San Fernando, La Union">
             </div>
 

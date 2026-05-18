@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Gym Membership System</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:        #0b0f1a;
+            --surface:   #111827;
+            --border:    #1f2937;
+            --accent:    #f97316;
+            --accent2:   #fb923c;
+            --accent-dim:#f9731620;
+            --green:     #22d3a5;
+            --red:       #f87171;
+            --yellow:    #fbbf24;
+            --text:      #f1f5f9;
+            --muted:     #64748b;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            height: 56px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .topbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .topbar-brand .icon { font-size: 1.2rem; }
+        .topbar-brand span  { color: var(--accent); }
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 0.82rem;
+            color: var(--muted);
+        }
+        .topbar-right strong { color: var(--text); }
+        .topbar-right a { color: var(--red); text-decoration: none; font-weight: 500; }
+        .topbar-right a:hover { opacity: 0.75; }
+
+        .main {
+            flex: 1;
+            display: flex;
+            gap: 20px;
+            padding: 20px 28px;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* ── Camera panel ── */
+        .camera-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        /* ── Stats grid ── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 14px;
+        }
+        .stat-num {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .stat-num.orange { color: var(--accent); }
+        .stat-num.green  { color: var(--green); }
+        .stat-num.red    { color: var(--red); }
+        .stat-num.yellow { color: var(--yellow); }
+        .stat-num.blue   { color: #60a5fa; }
+        .stat-label {
+            font-size: 0.65rem;
+            color: var(--muted);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── Expiring banner ── */
+        .expiring-banner {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            background: #78350f22;
+            border: 1px solid #f9731644;
+            border-radius: 8px;
+            padding: 9px 14px;
+            font-size: 0.8rem;
+            color: var(--yellow);
+        }
+        .expiring-banner .label { font-weight: 700; white-space: nowrap; }
+        .expiring-tag {
+            background: #78350f44;
+            padding: 2px 9px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+        .expiring-banner a {
+            margin-left: auto;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+
+        /* ── Camera frame ── */
+        .camera-frame {
+            position: relative;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            aspect-ratio: 4/3;
+        }
+        .camera-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .camera-init {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: var(--muted);
+            font-size: 0.85rem;
+            pointer-events: none;
+        }
+        .camera-init .ring {
+            width: 32px; height: 32px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+        .camera-init.hidden { display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Access banner ── */
+        .access-banner {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+        .access-banner.granted { background: #064e3b22; border-color: #22d3a544; color: var(--green); }
+        .access-banner.denied  { background: #7f1d1d22; border-color: #f8717144; color: var(--red); }
+        .access-banner .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .access-banner.granted .dot { background: var(--green); }
+        .access-banner.denied  .dot { background: var(--red); }
+
+        /* ── Processing bar ── */
+        .proc-bar {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 14px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--accent);
+        }
+        .proc-bar .ring-sm {
+            width: 12px; height: 12px;
+            border: 2px solid var(--accent-dim);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            flex-shrink: 0;
+        }
+
+        /* ── Side panel ── */
+        .side-panel {
+            width: 210px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .side-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .side-section-title {
+            padding: 10px 14px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: var(--muted);
+            border-bottom: 1px solid var(--border);
+        }
+        .feature-list { padding: 6px 0; }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 14px;
+            font-size: 0.8rem;
+            color: var(--text);
+        }
+        .feature-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+        }
+        .nav-list { padding: 6px 0; }
+        .nav-item {
+            display: block;
+            padding: 9px 14px;
+            font-size: 0.83rem;
+            color: var(--text);
+            text-decoration: none;
+            transition: background 0.15s, color 0.15s;
+            border-left: 2px solid transparent;
+        }
+        .nav-item:hover {
+            background: var(--accent-dim);
+            border-left-color: var(--accent);
+            color: var(--accent);
+        }
+        .nav-item.primary {
+            margin: 8px 10px;
+            padding: 9px 14px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 7px;
+            font-weight: 600;
+            text-align: center;
+            border-left: none;
+        }
+        .nav-item.primary:hover { background: var(--accent2); color: #fff; }
+
+        /* ── Live indicator dot ── */
+        .live-dot {
+            display: inline-block;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            margin-left: 6px;
+            animation: pulse 2s ease-in-out infinite;
+            vertical-align: middle;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="topbar-brand">
+        <span class="icon">🏋️</span>
+        Gym <span>Membership</span> System
+    </div>
+    <div class="topbar-right">
+        Signed in as <strong>{{ user }}</strong>
+        <a href="/logout">Sign out</a>
+    </div>
+</div>
+
+<div class="main">
+
+    <div class="camera-panel">
+
+        <!-- Stats — IDs allow live JS updates -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-num orange" id="stat-total">{{ total }}</div>
+                <div class="stat-label">Total Members</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num green" id="stat-active">{{ active }}</div>
+                <div class="stat-label">Active</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num red" id="stat-expired">{{ expired }}</div>
+                <div class="stat-label">Expired</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num yellow" id="stat-suspended">{{ suspended }}</div>
+                <div class="stat-label">Suspended</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num blue" id="stat-entries">{{ today_entries }}</div>
+                <div class="stat-label">Today's Entries <span class="live-dot"></span></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num green" id="stat-granted">—</div>
+                <div class="stat-label">Granted Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num red" id="stat-denied">—</div>
+                <div class="stat-label">Denied Today</div>
+            </div>
+        </div>
+
+        <!-- Expiring soon — updated live -->
+        <div class="expiring-banner" id="expiring-banner">
+            <span class="label">⚠ Expiring Soon:</span>
+            <span id="expiring-list"></span>
+            <a href="/members">Manage →</a>
+        </div>
+
+        <!-- Camera feed -->
+        <div class="camera-frame">
+            <img src="/video" id="feed" alt="Camera feed"
+                 onload="document.getElementById('cam-init').classList.add('hidden')">
+            <div class="camera-init" id="cam-init">
+                <div class="ring"></div>
+                <span>Initializing camera...</span>
+            </div>
+        </div>
+
+        <!-- Access result banner -->
+        <div class="access-banner" id="access-banner">
+            <div class="dot"></div>
+            <span id="access-text">—</span>
+        </div>
+
+        <!-- Processing indicator -->
+        <div class="proc-bar" id="proc-bar">
+            <div class="ring-sm"></div>
+            <span id="proc-msg">Processing...</span>
+        </div>
+
+    </div>
+
+    <!-- Side panel -->
+    <div class="side-panel">
+
+        <div class="side-section">
+            <div class="side-section-title">System Features</div>
+            <div class="feature-list">
+                <div class="feature-item"><div class="feature-dot"></div>Face Recognition</div>
+                <div class="feature-item"><div class="feature-dot"></div>Membership Verification</div>
+                <div class="feature-item"><div class="feature-dot"></div>Entry Access Control</div>
+                <div class="feature-item"><div class="feature-dot"></div>Emotion Detection</div>
+                <div class="feature-item"><div class="feature-dot"></div>Entry Logging</div>
+            </div>
+        </div>
+
+        <div class="side-section">
+            <div class="side-section-title">Navigation</div>
+            <div class="nav-list">
+                <a href="/members"       class="nav-item">👥 Members</a>
+                <a href="/entry-log"     class="nav-item">📋 Entry Log</a>
+                <a href="/analytics"     class="nav-item">📊 Analytics</a>
+                <a href="/register-face" class="nav-item">📷 Register Face</a>
+                <a href="/backups"       class="nav-item">💾 Backups</a>
+            </div>
+            <a href="/members/add" class="nav-item primary">+ Add Member</a>
+            <div style="height:8px;"></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+let lastAccessKey = null;
+let bannerTimer   = null;
+
+/* ── Live stats refresh every 5 seconds ── */
+function refreshStats() {
+    fetch('/api/stats')
+        .then(r => {
+            if (r.redirected || r.status === 401 || r.status === 302) {
+                window.location.href = '/';
+                return null;
+            }
+            return r.json();
+        })
+        .then(d => {
+            if (!d) return;
+            document.getElementById('stat-total').textContent     = d.total;
+            document.getElementById('stat-active').textContent    = d.active;
+            document.getElementById('stat-expired').textContent   = d.expired;
+            document.getElementById('stat-suspended').textContent = d.suspended;
+            document.getElementById('stat-entries').textContent   = d.today_entries;
+            document.getElementById('stat-granted').textContent   = d.today_granted;
+            document.getElementById('stat-denied').textContent    = d.today_denied;
+
+            // Expiring soon banner
+            const banner = document.getElementById('expiring-banner');
+            const list   = document.getElementById('expiring-list');
+            if (d.expiring_soon && d.expiring_soon.length > 0) {
+                list.innerHTML = d.expiring_soon
+                    .map(m => `<span class="expiring-tag">${m.name} — ${m.days}d left</span>`)
+                    .join(' ');
+                banner.style.display = 'flex';
+            } else {
+                banner.style.display = 'none';
+            }
+        })
+        .catch(() => {})
+        .finally(() => setTimeout(refreshStats, 5000));
+}
+refreshStats();
+
+/* ── Recognition status + access banner ── */
+function pollStatus() {
+    fetch('/recognition-status')
+        .then(r => {
+            if (r.redirected || r.status === 401 || r.status === 302) {
+                window.location.href = '/';
+                return null;
+            }
+            return r.json();
+        })
+        .then(data => {
+            if (!data) return;
+            const procBar    = document.getElementById('proc-bar');
+            const procMsg    = document.getElementById('proc-msg');
+            const banner     = document.getElementById('access-banner');
+            const bannerText = document.getElementById('access-text');
+
+            if (data.status) {
+                procMsg.textContent   = data.status + '...';
+                procBar.style.display = 'flex';
+            } else {
+                procBar.style.display = 'none';
+            }
+
+            if (data.access !== null && data.access !== undefined && data.name) {
+                const key = data.name + '|' + data.access;
+                if (key !== lastAccessKey) {
+                    lastAccessKey = key;
+                    const name   = data.name || 'Unknown';
+                    const extras = [
+                        data.membership || 'Active Member',
+                        data.gender     || '',
+                        data.age        ? 'Age ~' + data.age : '',
+                        data.emotion    || '',
+                    ].filter(Boolean).join('  ·  ');
+                    if (data.access === true) {
+                        banner.className    = 'access-banner granted';
+                        bannerText.textContent = `✓ ACCESS GRANTED — ${name}  (${extras})`;
+                    } else {
+                        banner.className    = 'access-banner denied';
+                        bannerText.textContent = `✗ ACCESS DENIED — ${name}: ${data.reason || 'Not authorized'}`;
+                    }
+                    banner.style.display = 'flex';
+                    clearTimeout(bannerTimer);
+                    bannerTimer = setTimeout(() => {
+                        banner.style.display = 'none';
+                        lastAccessKey = null;
+                    }, 5000);
+                }
+            }
+        })
+        .catch(() => {})
+        .finally(() => setTimeout(pollStatus, 800));
+}
+pollStatus();
+</script>
+
+</body>
+</html>

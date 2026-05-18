@@ -1,0 +1,37 @@
+# Python virtual environments
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# DeepFace cache
+dataset/*.pkl
+
+# Backups (local data, not for repo)
+backups/
+
+# Entry log (generated at runtime)
+entry_log.csv
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Test file
+test_app.py
+
+# Old/unused files
+_old_php/
+_old_scripts/
+encodings.pickle
+face_attendance.sql
+images/
+test_frame.jpg

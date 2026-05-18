@@ -1,0 +1,27 @@
+/* Gym Membership System — Global Styles
+   Group 9 | Directo, Quimson, Madayag */
+
+:root {
+    --bg:      #0b0f1a;
+    --surface: #111827;
+    --border:  #1f2937;
+    --accent:  #f97316;
+    --green:   #22d3a5;
+    --red:     #f87171;
+    --text:    #f1f5f9;
+    --muted:   #64748b;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+a { color: var(--accent); }

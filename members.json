@@ -1,0 +1,52 @@
+[
+  {
+    "folder_name": "Brix_Directo",
+    "full_name": "Brix Directo",
+    "membership_type": "annual",
+    "status": "active",
+    "start_date": "2026-01-01",
+    "expiry_date": "2026-12-31",
+    "contact": "09171234567",
+    "email": "brix@example.com"
+  },
+  {
+    "folder_name": "Jibreel_Quimson",
+    "full_name": "Jibreel Quimson",
+    "membership_type": "monthly",
+    "status": "active",
+    "start_date": "2026-05-01",
+    "expiry_date": "2026-05-31",
+    "contact": "09181234567",
+    "email": "jibreel@example.com"
+  },
+  {
+    "folder_name": "Djaunathan_Madayag",
+    "full_name": "Djaunathan Madayag",
+    "membership_type": "quarterly",
+    "status": "active",
+    "start_date": "2026-04-01",
+    "expiry_date": "2026-06-30",
+    "contact": "09191234567",
+    "email": "djaunathan@example.com"
+  },
+  {
+    "folder_name": "Christian_Pobre",
+    "full_name": "Christian Pobre",
+    "membership_type": "monthly",
+    "status": "active",
+    "start_date": "2026-03-01",
+    "expiry_date": "2026-06-01",
+    "contact": "09201234567",
+    "email": "christian@example.com"
+  },
+  {
+    "folder_name": "Mark_Allen_Almodovar",
+    "full_name": "Mark Allen Almodovar",
+    "membership_type": "monthly",
+    "status": "active",
+    "start_date": "2026-05-06",
+    "expiry_date": "2026-06-06",
+    "contact": "09279810821",
+    "email": "markallen.almodovar@lorma.edu"
+  }
+]

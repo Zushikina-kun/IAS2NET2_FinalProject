@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capturing — {{ name }}</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:      #0b0f1a;
+            --surface: #111827;
+            --border:  #1f2937;
+            --accent:  #f97316;
+            --green:   #22d3a5;
+            --text:    #f1f5f9;
+            --muted:   #64748b;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .topbar {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            height: 56px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .topbar-brand { font-size: 0.9rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+        .topbar-brand span { color: var(--accent); }
+        .topbar-name { font-size: 0.82rem; color: var(--muted); }
+        .topbar-name strong { color: var(--text); }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 28px;
+            gap: 16px;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .camera-frame {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: #000;
+        }
+        .camera-frame img { width: 100%; display: block; }
+
+        .progress-wrap {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .progress-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+        .progress-count { font-size: 0.82rem; color: var(--text); font-weight: 600; }
+        .progress-count span { color: var(--accent); }
+
+        .bar-track {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .done-msg {
+            display: none;
+            width: 100%;
+            background: #064e3b22;
+            border: 1px solid #22d3a544;
+            color: var(--green);
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="topbar-brand">🏋️ Gym <span>Membership</span> System &nbsp;/&nbsp; Face Capture</div>
+    <div class="topbar-name">Registering: <strong>{{ name }}</strong></div>
+</div>
+
+<div class="content">
+
+    <div class="camera-frame">
+        <img src="/capture-stream" id="stream" alt="Camera">
+    </div>
+
+    <div class="progress-wrap">
+        <div class="progress-header">
+            <span class="progress-label">Capture Progress</span>
+            <span class="progress-count"><span id="count">0</span> / 50 photos</span>
+        </div>
+        <div class="bar-track">
+            <div class="bar-fill" id="bar"></div>
+        </div>
+    </div>
+
+    <div class="done-msg" id="done-msg">
+        ✓ Face registered successfully. Redirecting to members list...
+    </div>
+
+</div>
+
+<script>
+const bar    = document.getElementById('bar');
+const count  = document.getElementById('count');
+const msg    = document.getElementById('done-msg');
+const stream = document.getElementById('stream');
+
+function poll() {
+    fetch('/capture-status')
+        .then(r => r.json())
+        .then(data => {
+            const pct = Math.round((data.count / 50) * 100);
+            bar.style.width = pct + '%';
+            count.textContent = data.count;
+
+            if (data.done) {
+                stream.src = '';
+                msg.style.display = 'block';
+                setTimeout(() => { window.location.href = '/members'; }, 2000);
+            } else {
+                setTimeout(poll, 500);
+            }
+        })
+        .catch(() => setTimeout(poll, 1000));
+}
+poll();
+</script>
+</body>
+</html>

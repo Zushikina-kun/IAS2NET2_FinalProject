@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Member — Gym Membership System</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:      #0b0f1a;
+            --surface: #111827;
+            --border:  #1f2937;
+            --accent:  #f97316;
+            --accent2: #fb923c;
+            --text:    #f1f5f9;
+            --muted:   #64748b;
+            --error:   #f87171;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            height: 56px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .topbar-brand {
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .topbar-brand span { color: var(--accent); }
+        .back-link { font-size: 0.82rem; color: var(--muted); text-decoration: none; }
+        .back-link:hover { color: var(--text); }
+
+        .center {
+            flex: 1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 32px 24px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            width: 100%;
+            max-width: 520px;
+        }
+
+        .card-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 4px; }
+        .card-sub   { font-size: 0.8rem; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        .field { margin-bottom: 16px; }
+        .field label {
+            display: block;
+            font-size: 0.73rem;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+        .field input,
+        .field select {
+            width: 100%;
+            padding: 10px 13px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            color: var(--text);
+            font-size: 0.88rem;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .field input:focus,
+        .field select:focus { border-color: var(--accent); }
+        .field select option { background: var(--surface); }
+
+        .btn {
+            width: 100%;
+            padding: 11px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 7px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+            margin-top: 4px;
+        }
+        .btn:hover { background: var(--accent2); }
+
+        .error-box {
+            background: #7f1d1d22;
+            border: 1px solid #f8717144;
+            color: var(--error);
+            padding: 10px 13px;
+            border-radius: 7px;
+            font-size: 0.82rem;
+            margin-bottom: 16px;
+        }
+
+        .info-box {
+            background: #78350f22;
+            border: 1px solid #f9731644;
+            color: #fdba74;
+            padding: 10px 13px;
+            border-radius: 7px;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="topbar-brand">🏋️ Gym <span>Membership</span> System &nbsp;/&nbsp; Add Member</div>
+    <a href="/members" class="back-link">← Members</a>
+</div>
+
+<div class="center">
+    <div class="card">
+        <div class="card-title">Add New Member</div>
+        <div class="card-sub">Fill in the member's details. After saving, you'll be prompted to capture their face for recognition.</div>
+
+        <form method="POST">
+            {% if error %}
+            <div class="error-box">{{ error }}</div>
+            {% endif %}
+
+            <div class="field">
+                <label for="full_name">Full Name *</label>
+                <input type="text" id="full_name" name="full_name"
+                       placeholder="e.g. Juan Dela Cruz"
+                       required autofocus autocomplete="off">
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label for="membership_type">Membership Type</label>
+                    <select id="membership_type" name="membership_type">
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="annual">Annual</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                        <option value="active">Active</option>
+                        <option value="expired">Expired</option>
+                        <option value="suspended">Suspended</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label for="start_date">Start Date *</label>
+                    <input type="date" id="start_date" name="start_date" required>
+                </div>
+                <div class="field">
+                    <label for="expiry_date">Expiry Date *</label>
+                    <input type="date" id="expiry_date" name="expiry_date" required>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="field">
+                    <label for="contact">Contact Number</label>
+                    <input type="text" id="contact" name="contact"
+                           placeholder="09XXXXXXXXX">
+                </div>
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email"
+                           placeholder="email@example.com">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label for="emergency_contact">Emergency Contact</label>
+                    <input type="text" id="emergency_contact" name="emergency_contact"
+                           placeholder="Name — 09XXXXXXXXX">
+                </div>
+                <div class="field">
+                    <label for="notes">Notes</label>
+                    <input type="text" id="notes" name="notes"
+                           placeholder="Any special notes...">
+                </div>
+            </div>
+
+            <button type="submit" class="btn">Save & Capture Face →</button>
+        </form>
+    </div>
+</div>
+
+<script>
+// Auto-set expiry based on membership type
+const typeSelect  = document.getElementById('membership_type');
+const startInput  = document.getElementById('start_date');
+const expiryInput = document.getElementById('expiry_date');
+
+function updateExpiry() {
+    if (!startInput.value) return;
+    const start = new Date(startInput.value);
+    const type  = typeSelect.value;
+    let expiry  = new Date(start);
+    if (type === 'monthly')   expiry.setMonth(expiry.getMonth() + 1);
+    if (type === 'quarterly') expiry.setMonth(expiry.getMonth() + 3);
+    if (type === 'annual')    expiry.setFullYear(expiry.getFullYear() + 1);
+    expiryInput.value = expiry.toISOString().split('T')[0];
+}
+
+typeSelect.addEventListener('change', updateExpiry);
+startInput.addEventListener('change', updateExpiry);
+
+// Default start date to today
+startInput.value = new Date().toISOString().split('T')[0];
+updateExpiry();
+</script>
+
+</body>
+</html>

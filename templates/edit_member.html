@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Member — Gym Membership System</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:      #0b0f1a;
+            --surface: #111827;
+            --border:  #1f2937;
+            --accent:  #f97316;
+            --accent2: #fb923c;
+            --text:    #f1f5f9;
+            --muted:   #64748b;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            height: 56px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .topbar-brand { font-size: 0.9rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+        .topbar-brand span { color: var(--accent); }
+        .back-link { font-size: 0.82rem; color: var(--muted); text-decoration: none; }
+        .back-link:hover { color: var(--text); }
+
+        .center {
+            flex: 1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 32px 24px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            width: 100%;
+            max-width: 520px;
+        }
+
+        .card-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 4px; }
+        .card-sub   { font-size: 0.8rem; color: var(--muted); margin-bottom: 24px; }
+
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        .field { margin-bottom: 16px; }
+        .field label {
+            display: block;
+            font-size: 0.73rem;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+        .field input,
+        .field select {
+            width: 100%;
+            padding: 10px 13px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            color: var(--text);
+            font-size: 0.88rem;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .field input:focus,
+        .field select:focus { border-color: var(--accent); }
+        .field select option { background: var(--surface); }
+
+        .btn-row { display: flex; gap: 10px; margin-top: 4px; }
+        .btn {
+            flex: 1;
+            padding: 11px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 7px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn:hover { background: var(--accent2); }
+        .btn-cancel {
+            flex: 1;
+            padding: 11px;
+            background: var(--surface);
+            color: var(--muted);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+        }
+        .btn-cancel:hover { color: var(--text); }
+
+        hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="topbar-brand">🏋️ Gym <span>Membership</span> System &nbsp;/&nbsp; Edit Member</div>
+    <a href="/members" class="back-link">← Members</a>
+</div>
+
+<div class="center">
+    <div class="card">
+        <div class="card-title">Edit Member</div>
+        <div class="card-sub">Update membership details for <strong>{{ member.full_name }}</strong>.</div>
+
+        <form method="POST">
+            <div class="field">
+                <label for="full_name">Full Name</label>
+                <input type="text" id="full_name" name="full_name"
+                       value="{{ member.full_name }}" required>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label for="membership_type">Membership Type</label>
+                    <select id="membership_type" name="membership_type">
+                        <option value="monthly"   {% if member.membership_type == 'monthly'   %}selected{% endif %}>Monthly</option>
+                        <option value="quarterly" {% if member.membership_type == 'quarterly' %}selected{% endif %}>Quarterly</option>
+                        <option value="annual"    {% if member.membership_type == 'annual'    %}selected{% endif %}>Annual</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                        <option value="active"    {% if member.status == 'active'    %}selected{% endif %}>Active</option>
+                        <option value="expired"   {% if member.status == 'expired'   %}selected{% endif %}>Expired</option>
+                        <option value="suspended" {% if member.status == 'suspended' %}selected{% endif %}>Suspended</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label for="start_date">Start Date</label>
+                    <input type="date" id="start_date" name="start_date"
+                           value="{{ member.start_date }}" required>
+                </div>
+                <div class="field">
+                    <label for="expiry_date">Expiry Date</label>
+                    <input type="date" id="expiry_date" name="expiry_date"
+                           value="{{ member.expiry_date }}" required>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="field">
+                    <label for="contact">Contact Number</label>
+                    <input type="text" id="contact" name="contact"
+                           value="{{ member.contact or '' }}" placeholder="09XXXXXXXXX">
+                </div>
+                <div class="field">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email"
+                           value="{{ member.email or '' }}" placeholder="email@example.com">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label for="emergency_contact">Emergency Contact</label>
+                    <input type="text" id="emergency_contact" name="emergency_contact"
+                           value="{{ member.emergency_contact or '' }}" placeholder="Name — 09XXXXXXXXX">
+                </div>
+                <div class="field">
+                    <label for="notes">Notes</label>
+                    <input type="text" id="notes" name="notes"
+                           value="{{ member.notes or '' }}" placeholder="Any special notes...">
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <a href="/members" class="btn-cancel">Cancel</a>
+                <button type="submit" class="btn">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

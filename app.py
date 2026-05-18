@@ -196,8 +196,16 @@ def generate_capture_frames(name, target=50):
             if w >= 80 and h >= 80:
                 cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 136), 2)
                 face_img = frame[y:y+h, x:x+w]
+                # Normalize: resize to 224x224 and enhance contrast
+                face_img = cv2.resize(face_img, (224, 224), interpolation=cv2.INTER_LANCZOS4)
+                lab = cv2.cvtColor(face_img, cv2.COLOR_BGR2LAB)
+                l, a, b = cv2.split(lab)
+                clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+                l = clahe.apply(l)
+                face_img = cv2.cvtColor(cv2.merge([l, a, b]), cv2.COLOR_LAB2BGR)
                 file_num = start_count + count
-                cv2.imwrite(os.path.join(save_path, f"{file_num}.jpg"), face_img)
+                cv2.imwrite(os.path.join(save_path, f"{file_num}.jpg"), face_img,
+                            [cv2.IMWRITE_JPEG_QUALITY, 95])
                 count += 1
                 capture_state[name]["count"] = count
 

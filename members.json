@@ -8,7 +8,7 @@
     "expiry_date": "2026-12-31",
     "contact": "09171234567",
     "email": "brix@example.com",
-    "total_visits": 12
+    "total_visits": 19
   },
   {
     "folder_name": "Jibreel_Quimson",
@@ -51,5 +51,29 @@
     "expiry_date": "2026-06-06",
     "contact": "09279810821",
     "email": "markallen.almodovar@lorma.edu"
+  },
+  {
+    "folder_name": "Cyrill_Rubis",
+    "full_name": "Cyrill Rubis",
+    "membership_type": "monthly",
+    "status": "active",
+    "start_date": "2026-05-18",
+    "expiry_date": "2026-06-18",
+    "contact": "",
+    "email": "",
+    "total_visits": 0,
+    "registered_at": "2026-05-18 00:00:00"
+  },
+  {
+    "folder_name": "Jan_Alexis_Roldan",
+    "full_name": "Jan Alexis Roldan",
+    "membership_type": "monthly",
+    "status": "active",
+    "start_date": "2026-05-18",
+    "expiry_date": "2026-06-18",
+    "contact": "",
+    "email": "",
+    "total_visits": 0,
+    "registered_at": "2026-05-18 00:00:00"
   }
 ]

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About — Gym Membership System</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --bg:#0b0f1a; --surface:#111827; --border:#1f2937; --accent:#f97316; --text:#f1f5f9; --muted:#64748b; --green:#22d3a5; }
+        body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; }
+        .topbar { display:flex; align-items:center; justify-content:space-between; padding:0 28px; height:56px; background:var(--surface); border-bottom:1px solid var(--border); }
+        .topbar-brand { font-size:0.9rem; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; }
+        .topbar-brand span { color:var(--accent); }
+        .back-link { font-size:0.82rem; color:var(--muted); text-decoration:none; }
+        .back-link:hover { color:var(--text); }
+        .content { max-width:800px; margin:0 auto; padding:32px 28px; }
+        .hero { text-align:center; margin-bottom:36px; }
+        .hero-icon { font-size:3rem; margin-bottom:12px; }
+        .hero h1 { font-size:1.5rem; font-weight:700; }
+        .hero h1 span { color:var(--accent); }
+        .hero p { font-size:0.88rem; color:var(--muted); margin-top:8px; line-height:1.6; max-width:600px; margin-left:auto; margin-right:auto; }
+        .section { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:16px; }
+        .section h2 { font-size:0.9rem; font-weight:600; margin-bottom:12px; color:var(--accent); }
+        .section p, .section li { font-size:0.84rem; color:var(--muted); line-height:1.7; }
+        .section ul { padding-left:18px; }
+        .section li { margin-bottom:6px; }
+        .tech-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(140px,1fr)); gap:10px; margin-top:12px; }
+        .tech-item { background:var(--bg); padding:12px; border-radius:8px; text-align:center; }
+        .tech-item .name { font-size:0.82rem; font-weight:600; color:var(--text); }
+        .tech-item .desc { font-size:0.7rem; color:var(--muted); margin-top:3px; }
+        .team-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:12px; }
+        .team-card { background:var(--bg); padding:14px; border-radius:8px; text-align:center; }
+        .team-card .role { font-size:0.68rem; color:var(--accent); text-transform:uppercase; letter-spacing:0.5px; font-weight:600; }
+        .team-card .name { font-size:0.88rem; font-weight:500; margin-top:4px; }
+        .version { text-align:center; font-size:0.75rem; color:var(--muted); margin-top:24px; }
+    </style>
+</head>
+<body>
+<div class="topbar">
+    <div class="topbar-brand">🏋️ Gym <span>Membership</span> System &nbsp;/&nbsp; About</div>
+    <a href="/dashboard" class="back-link">← Dashboard</a>
+</div>
+<div class="content">
+    <div class="hero">
+        <div class="hero-icon">🏋️</div>
+        <h1>Gym <span>Membership</span> System</h1>
+        <p>An advanced gym access control system powered by real-time face recognition. Automatically identifies members, verifies membership status, and logs all entry attempts — no cards, no PINs, no manual check-in needed.</p>
+    </div>
+
+    <div class="section">
+        <h2>🎯 What This System Does</h2>
+        <ul>
+            <li>Identifies gym members using AI-powered face recognition (VGG-Face deep learning model)</li>
+            <li>Grants or denies entry based on real-time membership status verification</li>
+            <li>Detects emotion, gender, and age for analytics and security insights</li>
+            <li>Logs every entry attempt with full audit trail</li>
+            <li>Provides analytics dashboards for business intelligence</li>
+            <li>Manages member lifecycle: registration, renewal, suspension, deletion</li>
+            <li>Multi-admin system with role-based access control</li>
+            <li>Data backup and restore for business continuity</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>🛠️ Technology Stack</h2>
+        <div class="tech-grid">
+            <div class="tech-item"><div class="name">Python 3.10+</div><div class="desc">Backend</div></div>
+            <div class="tech-item"><div class="name">Flask</div><div class="desc">Web Framework</div></div>
+            <div class="tech-item"><div class="name">DeepFace</div><div class="desc">Face Recognition</div></div>
+            <div class="tech-item"><div class="name">TensorFlow</div><div class="desc">Deep Learning</div></div>
+            <div class="tech-item"><div class="name">OpenCV</div><div class="desc">Computer Vision</div></div>
+            <div class="tech-item"><div class="name">VGG-Face</div><div class="desc">Face Model</div></div>
+            <div class="tech-item"><div class="name">Haar Cascade</div><div class="desc">Face Detection</div></div>
+            <div class="tech-item"><div class="name">CLAHE</div><div class="desc">Image Enhancement</div></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>👥 Development Team — Group 9</h2>
+        <div class="team-grid">
+            <div class="team-card"><div class="role">Leader</div><div class="name">Directo, Brix A.</div></div>
+            <div class="team-card"><div class="role">Member</div><div class="name">Quimson, Jibreel A.</div></div>
+            <div class="team-card"><div class="role">Member</div><div class="name">Madayag, Djaunathan A.S.</div></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📚 Course Information</h2>
+        <p><strong>Course:</strong> Information Assurance and Security 2 (IAS2)<br>
+        <strong>Program:</strong> Bachelor of Science in Information Technology<br>
+        <strong>Year Level:</strong> 3rd Year<br>
+        <strong>Institution:</strong> Lorma Colleges<br>
+        <strong>School Year:</strong> 2025–2026</p>
+    </div>
+
+    <div class="version">Version 2.0 · Built May 2026</div>
+</div>
+</body>
+</html>

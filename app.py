@@ -34,15 +34,12 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 DATASET_PATH  = "dataset"
 ENTRY_LOG     = "entry_log.csv"
 MEMBERS_FILE  = "members.json"
+ADMINS_FILE   = "admins.json"
 BACKUP_DIR    = "backups"
 CACHE_FILE    = os.path.join(
     DATASET_PATH,
     "ds_model_vggface_detector_opencv_aligned_normalization_base_expand_0.pkl"
 )
-
-# Admin credentials — password stored as SHA-256 hash
-ADMIN_USERNAME = "admin"
-ADMIN_PASSWORD_HASH = hashlib.sha256("admin123".encode()).hexdigest()
 
 # Rate limiting for login
 _login_attempts = {}
@@ -52,9 +49,25 @@ LOGIN_LOCKOUT_SECONDS = 300  # 5 minutes
 
 # File-level lock to prevent concurrent JSON corruption
 _members_lock = threading.Lock()
+_admins_lock = threading.Lock()
 
 # Ensure backup directory exists
 os.makedirs(BACKUP_DIR, exist_ok=True)
+
+# Ensure admins file exists with default admin
+def _init_admins():
+    if not os.path.exists(ADMINS_FILE):
+        default_admins = [{
+            "username": "admin",
+            "password_hash": hashlib.sha256("admin123".encode()).hexdigest(),
+            "role": "superadmin",
+            "full_name": "System Administrator",
+            "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }]
+        with open(ADMINS_FILE, "w") as f:
+            json.dump(default_admins, f, indent=2)
+
+_init_admins()
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -144,6 +157,41 @@ def clear_deepface_cache():
             print("[Watcher] Dataset changed — DeepFace cache cleared.")
         except (PermissionError, FileNotFoundError):
             print("[Watcher] Cache already gone or in use, skipping.")
+
+
+# ── Admin helpers ─────────────────────────────────────────────────────────────
+
+def load_admins():
+    with _admins_lock:
+        if not os.path.exists(ADMINS_FILE):
+            return []
+        with open(ADMINS_FILE, "r") as f:
+            return json.load(f)
+
+
+def save_admins(admins):
+    with _admins_lock:
+        with open(ADMINS_FILE, "w") as f:
+            json.dump(admins, f, indent=2)
+
+
+def get_admin(username):
+    for a in load_admins():
+        if a["username"] == username:
+            return a
+    return None
+
+
+def get_current_admin():
+    """Get the current logged-in admin's data."""
+    username = session.get("user", "")
+    return get_admin(username)
+
+
+def is_superadmin():
+    """Check if current user is a superadmin."""
+    admin = get_current_admin()
+    return admin and admin.get("role") == "superadmin"
 
 
 # ── Dataset watcher ───────────────────────────────────────────────────────────
@@ -244,11 +292,13 @@ def login():
             password = request.form.get("password", "")
             password_hash = hashlib.sha256(password.encode()).hexdigest()
 
-            if username == ADMIN_USERNAME and password_hash == ADMIN_PASSWORD_HASH:
+            admin = get_admin(username)
+            if admin and admin["password_hash"] == password_hash:
                 record_login_attempt(ip, success=True)
                 session.permanent = True
                 session["admin"] = True
                 session["user"]  = username
+                session["role"]  = admin.get("role", "staff")
                 session["last_active"] = datetime.now().isoformat()
                 return redirect(url_for("dashboard"))
             else:
@@ -256,6 +306,66 @@ def login():
                 error = "Invalid username or password."
 
     return render_template("login.html", error=error)
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    """Admin registration — only superadmins can create new accounts."""
+    if not is_logged_in():
+        return redirect(url_for("login"))
+    if not is_superadmin():
+        return redirect(url_for("dashboard"))
+
+    error = None
+    success = None
+
+    if request.method == "POST":
+        username  = request.form.get("username", "").strip().lower()
+        password  = request.form.get("password", "")
+        confirm   = request.form.get("confirm_password", "")
+        full_name = request.form.get("full_name", "").strip()
+        role      = request.form.get("role", "staff")
+
+        if not username or not password or not full_name:
+            error = "All fields are required."
+        elif len(username) < 3:
+            error = "Username must be at least 3 characters."
+        elif len(password) < 6:
+            error = "Password must be at least 6 characters."
+        elif password != confirm:
+            error = "Passwords do not match."
+        elif get_admin(username):
+            error = f"Username '{username}' already exists."
+        elif role not in ("staff", "superadmin"):
+            error = "Invalid role."
+        else:
+            admins = load_admins()
+            admins.append({
+                "username": username,
+                "password_hash": hashlib.sha256(password.encode()).hexdigest(),
+                "role": role,
+                "full_name": full_name,
+                "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            })
+            save_admins(admins)
+            success = f"Account '{username}' created successfully as {role}."
+
+    admins = load_admins()
+    return render_template("register_admin.html", error=error, success=success,
+                           admins=admins, is_super=True)
+
+
+@app.route("/admin/delete/<username>", methods=["POST"])
+@login_required
+def delete_admin(username):
+    """Delete an admin account (superadmin only, can't delete yourself)."""
+    if not is_superadmin():
+        return redirect(url_for("dashboard"))
+    if username == session.get("user"):
+        return redirect(url_for("register"))  # Can't delete yourself
+    admins = [a for a in load_admins() if a["username"] != username]
+    save_admins(admins)
+    return redirect(url_for("register"))
 
 
 @app.route("/logout")
@@ -365,6 +475,9 @@ def add_member():
         email           = request.form.get("email", "").strip()
         emergency_contact = request.form.get("emergency_contact", "").strip()
         notes           = request.form.get("notes", "").strip()
+        gender          = request.form.get("gender", "").strip()
+        birthday        = request.form.get("birthday", "").strip()
+        address         = request.form.get("address", "").strip()
 
         if not full_name:
             return render_template("add_member.html", error="Full name is required.")
@@ -401,6 +514,9 @@ def add_member():
             "email":             email,
             "emergency_contact": emergency_contact,
             "notes":             notes,
+            "gender":            gender,
+            "birthday":          birthday,
+            "address":           address,
             "registered_at":     datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "total_visits":      0,
         })
@@ -431,6 +547,9 @@ def edit_member(folder_name):
         member["email"]             = request.form.get("email", member.get("email", "")).strip()
         member["emergency_contact"] = request.form.get("emergency_contact", member.get("emergency_contact", "")).strip()
         member["notes"]             = request.form.get("notes", member.get("notes", "")).strip()
+        member["gender"]            = request.form.get("gender", member.get("gender", "")).strip()
+        member["birthday"]          = request.form.get("birthday", member.get("birthday", "")).strip()
+        member["address"]           = request.form.get("address", member.get("address", "")).strip()
         save_members(members)
         return redirect(url_for("members_list"))
 
@@ -901,6 +1020,20 @@ def member_profile(folder_name):
                            total_granted=total_granted,
                            total_denied=total_denied,
                            photo_count=photo_count)
+
+
+# ── About & Help pages ─────────────────────────────────────────────────────────
+
+@app.route("/about")
+@login_required
+def about():
+    return render_template("about.html")
+
+
+@app.route("/help")
+@login_required
+def help_page():
+    return render_template("help.html")
 
 
 # ── Error handlers ────────────────────────────────────────────────────────────

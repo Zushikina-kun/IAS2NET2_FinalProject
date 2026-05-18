@@ -240,25 +240,20 @@ def _deepface_worker():
                 face_img, db_path=db_path,
                 enforce_detection=False, silent=True,
                 distance_metric="cosine",
-                threshold=0.30          # strict — reduces false identity matches
+                threshold=0.40          # DeepFace default for cosine distance
             )
 
             folder_name = "Unknown"
             if len(result) > 0 and len(result[0]) > 0:
                 top = result[0].iloc[0]
                 identity_path = top['identity']
-                # Check the distance — reject weak matches
-                dist_col = [c for c in top.index if 'distance' in c.lower()]
-                if dist_col:
-                    dist = float(top[dist_col[0]])
-                    if dist > 0.30:
-                        print(f"[camera] Weak match rejected: dist={dist:.3f}")
-                        folder_name = "Unknown"
-                    else:
-                        folder_name = os.path.basename(os.path.dirname(identity_path))
-                        print(f"[camera] Match: {folder_name} dist={dist:.3f}")
+                dist = float(top.get('distance', 1.0))
+                if dist > 0.40:
+                    print(f"[camera] Weak match rejected: dist={dist:.3f}")
+                    folder_name = "Unknown"
                 else:
                     folder_name = os.path.basename(os.path.dirname(identity_path))
+                    print(f"[camera] Match: {folder_name} dist={dist:.3f}")
 
             if folder_name != "Unknown":
                 access, reason, member = check_membership(folder_name)
@@ -436,6 +431,8 @@ def generate_frames():
                 x1 = max(0, x - pad_x)
                 x2 = min(frame.shape[1], x + w + pad_x)
                 face_crop = frame[y1:y2, x1:x2].copy()
+                # Resize to 224x224 to match dataset images
+                face_crop = cv2.resize(face_crop, (224, 224), interpolation=cv2.INTER_LANCZOS4)
                 with _face_queue_lock:
                     _face_queue = face_crop
 

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help — Gym Membership System</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --bg:#0b0f1a; --surface:#111827; --border:#1f2937; --accent:#f97316; --accent2:#fb923c; --green:#22d3a5; --red:#f87171; --yellow:#fbbf24; --text:#f1f5f9; --muted:#64748b; }
+        body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; }
+        .topbar { display:flex; align-items:center; justify-content:space-between; padding:0 28px; height:56px; background:var(--surface); border-bottom:1px solid var(--border); }
+        .topbar-brand { font-size:0.9rem; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; }
+        .topbar-brand span { color:var(--accent); }
+        .back-link { font-size:0.82rem; color:var(--muted); text-decoration:none; }
+        .back-link:hover { color:var(--text); }
+        .content { max-width:900px; margin:0 auto; padding:28px; }
+        .page-title { font-size:1.3rem; font-weight:600; margin-bottom:6px; }
+        .page-sub { font-size:0.84rem; color:var(--muted); margin-bottom:24px; }
+        .faq { margin-bottom:12px; }
+        .faq-item { background:var(--surface); border:1px solid var(--border); border-radius:10px; margin-bottom:10px; overflow:hidden; }
+        .faq-q { padding:14px 18px; font-size:0.88rem; font-weight:600; cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
+        .faq-q:hover { background:#ffffff04; }
+        .faq-q .arrow { color:var(--accent); font-size:0.8rem; transition:transform 0.2s; }
+        .faq-a { padding:0 18px 14px; font-size:0.82rem; color:var(--muted); line-height:1.7; display:none; border-top:1px solid var(--border); padding-top:12px; }
+        .faq-item.open .faq-a { display:block; }
+        .faq-item.open .arrow { transform:rotate(90deg); }
+        .section-title { font-size:0.72rem; font-weight:700; letter-spacing:0.6px; text-transform:uppercase; color:var(--accent); margin:24px 0 12px; }
+        .shortcut-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px,1fr)); gap:10px; margin-bottom:24px; }
+        .shortcut { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px 16px; }
+        .shortcut .path { font-size:0.78rem; font-family:monospace; color:var(--accent); margin-bottom:4px; }
+        .shortcut .desc { font-size:0.8rem; color:var(--muted); }
+        .tip-box { background:#78350f22; border:1px solid #f9731644; border-radius:8px; padding:14px 18px; margin-bottom:16px; }
+        .tip-box .tip-title { font-size:0.78rem; font-weight:700; color:var(--yellow); margin-bottom:6px; }
+        .tip-box p { font-size:0.82rem; color:var(--muted); line-height:1.6; }
+    </style>
+</head>
+<body>
+<div class="topbar">
+    <div class="topbar-brand">🏋️ Gym <span>Membership</span> System &nbsp;/&nbsp; Help</div>
+    <a href="/dashboard" class="back-link">← Dashboard</a>
+</div>
+<div class="content">
+    <div class="page-title">Help & Guide</div>
+    <div class="page-sub">Quick reference for using the Gym Membership System</div>
+
+    <div class="tip-box">
+        <div class="tip-title">💡 Quick Tip</div>
+        <p>The system works best when members have <strong>50+ face photos</strong> taken in varied lighting and slight angle changes. Use "Add More Photos" on any member's profile to improve recognition accuracy.</p>
+    </div>
+
+    <div class="section-title">📍 Quick Navigation</div>
+    <div class="shortcut-grid">
+        <div class="shortcut"><div class="path">/dashboard</div><div class="desc">Live camera feed + real-time stats</div></div>
+        <div class="shortcut"><div class="path">/members</div><div class="desc">View, search, manage all members</div></div>
+        <div class="shortcut"><div class="path">/members/add</div><div class="desc">Register a new gym member</div></div>
+        <div class="shortcut"><div class="path">/entry-log</div><div class="desc">View all entry attempts with filters</div></div>
+        <div class="shortcut"><div class="path">/analytics</div><div class="desc">Charts, peak hours, top visitors</div></div>
+        <div class="shortcut"><div class="path">/backups</div><div class="desc">Create & restore data backups</div></div>
+        <div class="shortcut"><div class="path">/register</div><div class="desc">Manage admin accounts (superadmin only)</div></div>
+        <div class="shortcut"><div class="path">/about</div><div class="desc">System info & tech stack</div></div>
+    </div>
+
+    <div class="section-title">❓ Frequently Asked Questions</div>
+    <div class="faq">
+        <div class="faq-item">
+            <div class="faq-q">How do I add a new gym member? <span class="arrow">▶</span></div>
+            <div class="faq-a">Go to <strong>Members → + Add Member</strong>. Fill in their details (name, membership type, dates, contact info). After saving, the camera will open to capture 50 face photos for recognition.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">The system doesn't recognize a member's face <span class="arrow">▶</span></div>
+            <div class="faq-a">Go to their profile and click <strong>"Add More Photos"</strong> to capture additional face images. Make sure they face the camera directly in good lighting. More photos = better accuracy. You can also run <code>normalize_dataset.py</code> to enhance all existing photos.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">How does the access control work? <span class="arrow">▶</span></div>
+            <div class="faq-a">When someone stands in front of the camera, the system: (1) detects their face, (2) identifies them against the dataset, (3) checks their membership status. If they're an active member with a valid (non-expired) membership, access is GRANTED. Otherwise, it's DENIED.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">What's the difference between Expired and Suspended? <span class="arrow">▶</span></div>
+            <div class="faq-a"><strong>Expired</strong> means their membership period ended (date passed). <strong>Suspended</strong> means an admin manually paused their access (e.g., for rule violations). Both result in denied entry. Use "Renew" to reactivate expired members, or "Suspend" toggle for manual control.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">How do I renew a membership? <span class="arrow">▶</span></div>
+            <div class="faq-a">On the Members page, expired/suspended members show a <strong>Renew</strong> button. Clicking it extends their membership by their plan duration (1 month, 3 months, or 1 year) from today or their current expiry date, whichever is later.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">Can I have multiple admin accounts? <span class="arrow">▶</span></div>
+            <div class="faq-a">Yes! Go to <strong>Admin Accounts</strong> (superadmin only). You can create staff accounts with limited access or additional superadmin accounts. Staff can manage members and view logs. Superadmins can also manage other admin accounts.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">How do I back up my data? <span class="arrow">▶</span></div>
+            <div class="faq-a">Go to <strong>Backups</strong> and click "Create Backup". This saves a timestamped copy of all member data and entry logs. You can restore from any previous backup if something goes wrong.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">The camera shows "initializing" and never loads <span class="arrow">▶</span></div>
+            <div class="faq-a">Another application is using the webcam, or a stale Python process is running. Close all other camera apps, then kill stale processes: open Task Manager → End all Python processes → restart the server.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">I'm locked out after too many login attempts <span class="arrow">▶</span></div>
+            <div class="faq-a">The system locks your IP for 5 minutes after 5 failed attempts. Wait for the lockout to expire, or restart the server to reset all rate limits.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">How do I export entry logs? <span class="arrow">▶</span></div>
+            <div class="faq-a">Go to <strong>Entry Log</strong>, optionally filter by date, then click the <strong>"Export CSV"</strong> button. The file downloads immediately with all matching records.</div>
+        </div>
+    </div>
+
+    <div class="section-title">🔐 Admin Roles</div>
+    <div class="shortcut-grid">
+        <div class="shortcut"><div class="path">Superadmin</div><div class="desc">Full access: manage members, logs, analytics, backups, AND create/delete other admin accounts</div></div>
+        <div class="shortcut"><div class="path">Staff</div><div class="desc">Can manage members, view entry logs, analytics, and backups. Cannot manage admin accounts.</div></div>
+    </div>
+
+    <div class="section-title">⚡ Keyboard Shortcuts</div>
+    <div class="shortcut-grid">
+        <div class="shortcut"><div class="path">Ctrl + /</div><div class="desc">Focus search bar (Members page)</div></div>
+        <div class="shortcut"><div class="path">Esc</div><div class="desc">Close modals / clear search</div></div>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => q.parentElement.classList.toggle('open'));
+});
+</script>
+</body>
+</html>

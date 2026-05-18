@@ -240,7 +240,7 @@ def _deepface_worker():
                 face_img, db_path=db_path,
                 enforce_detection=False, silent=True,
                 distance_metric="cosine",
-                threshold=0.35          # stricter than default 0.40 — reduces false matches
+                threshold=0.30          # strict — reduces false identity matches
             )
 
             folder_name = "Unknown"
@@ -251,11 +251,12 @@ def _deepface_worker():
                 dist_col = [c for c in top.index if 'distance' in c.lower()]
                 if dist_col:
                     dist = float(top[dist_col[0]])
-                    if dist > 0.35:
+                    if dist > 0.30:
                         print(f"[camera] Weak match rejected: dist={dist:.3f}")
                         folder_name = "Unknown"
                     else:
                         folder_name = os.path.basename(os.path.dirname(identity_path))
+                        print(f"[camera] Match: {folder_name} dist={dist:.3f}")
                 else:
                     folder_name = os.path.basename(os.path.dirname(identity_path))
 
@@ -413,31 +414,46 @@ def generate_frames():
 
         frame_count += 1
         gray  = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray = cv2.equalizeHist(gray)
         faces = _face_cascade.detectMultiScale(
-            gray, scaleFactor=1.2, minNeighbors=5
+            gray, scaleFactor=1.1, minNeighbors=6, minSize=(100, 100),
+            flags=cv2.CASCADE_SCALE_IMAGE
         )
 
         # Every 5 frames, send a face crop to the background worker
         with _face_queue_lock:
             busy = _worker_busy
-        if frame_count % 5 == 0 and len(faces) > 0 and not busy:
-            x, y, w, h = faces[0]
-            face_crop = frame[y:y+h, x:x+w].copy()
-            with _face_queue_lock:
-                _face_queue = face_crop
+        if frame_count % 10 == 0 and len(faces) > 0 and not busy:
+            # Pick the largest face (most likely the real person, not background noise)
+            x, y, w, h = max(faces, key=lambda f: f[2] * f[3])
+            # Only process if face is reasonably large (at least 120x120 pixels)
+            if w >= 120 and h >= 120:
+                # Add padding around the face crop for better recognition
+                pad_x = int(w * 0.15)
+                pad_y = int(h * 0.15)
+                y1 = max(0, y - pad_y)
+                y2 = min(frame.shape[0], y + h + pad_y)
+                x1 = max(0, x - pad_x)
+                x2 = min(frame.shape[1], x + w + pad_x)
+                face_crop = frame[y1:y2, x1:x2].copy()
+                with _face_queue_lock:
+                    _face_queue = face_crop
 
         # Read latest detection result
         with _state_lock:
             d = dict(_detected)
 
-        # Draw overlays for each detected face
-        for (x, y, w, h) in faces:
-            _draw_overlay(
-                frame, x, y, w, h,
-                d["access"], d["name"], d["full_name"],
-                d["reason"], d["emotion"], d["gender"],
-                d["age"],    d["confidence"]
-            )
+        # Draw overlay only on the largest detected face (ignore small false positives)
+        if len(faces) > 0:
+            largest = max(faces, key=lambda f: f[2] * f[3])
+            x, y, w, h = largest
+            if w >= 100 and h >= 100:
+                _draw_overlay(
+                    frame, x, y, w, h,
+                    d["access"], d["name"], d["full_name"],
+                    d["reason"], d["emotion"], d["gender"],
+                    d["age"],    d["confidence"]
+                )
 
         status = get_status()
         if status:

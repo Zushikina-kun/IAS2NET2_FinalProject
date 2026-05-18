@@ -168,12 +168,16 @@ def generate_capture_frames(name, target=50):
     save_path = os.path.join(DATASET_PATH, name)
     os.makedirs(save_path, exist_ok=True)
 
+    # Find the next available file number (for appending more photos)
+    existing = [f for f in os.listdir(save_path) if f.endswith(".jpg")]
+    start_count = len(existing)
+
     face_cascade = cv2.CascadeClassifier(
         cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
     )
 
     count = 0
-    capture_state[name] = {"count": 0, "done": False}
+    capture_state[name] = {"count": 0, "total": target, "done": False, "existing": start_count}
 
     while count < target:
         frame = _camera_stream.read()
@@ -183,20 +187,27 @@ def generate_capture_frames(name, target=50):
             continue
 
         gray  = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.2, minNeighbors=5)
+        gray  = cv2.equalizeHist(gray)
+        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=6, minSize=(100, 100))
 
         if len(faces) > 0:
-            x, y, w, h = faces[0]
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 136), 2)
-            face_img = frame[y:y+h, x:x+w]
-            cv2.imwrite(os.path.join(save_path, f"{count}.jpg"), face_img)
-            count += 1
-            capture_state[name]["count"] = count
+            # Pick the largest face
+            x, y, w, h = max(faces, key=lambda f: f[2] * f[3])
+            if w >= 80 and h >= 80:
+                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 136), 2)
+                face_img = frame[y:y+h, x:x+w]
+                file_num = start_count + count
+                cv2.imwrite(os.path.join(save_path, f"{file_num}.jpg"), face_img)
+                count += 1
+                capture_state[name]["count"] = count
 
         cv2.putText(frame, f"Capturing: {count}/{target}", (10, 30),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 136), 2)
         cv2.putText(frame, "Keep your face in frame", (10, 60),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (200, 200, 200), 1)
+        if start_count > 0:
+            cv2.putText(frame, f"({start_count} existing + {count} new)", (10, 85),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (200, 200, 100), 1)
 
         _, buffer = cv2.imencode('.jpg', frame)
         yield (b'--frame\r\nContent-Type: image/jpeg\r\n\r\n'
@@ -586,6 +597,18 @@ def analytics():
 
 # ── Face registration ─────────────────────────────────────────────────────────
 
+@app.route("/members/add-photos/<folder_name>")
+@login_required
+def add_photos(folder_name):
+    """Start capturing additional photos for an existing member."""
+    member = get_member_by_folder(folder_name)
+    if not member:
+        return redirect(url_for("members_list"))
+    session["capture_name"] = folder_name
+    session["capture_target"] = 30  # fewer photos when adding to existing set
+    return redirect(url_for("capture_face"))
+
+
 @app.route("/register-face", methods=["GET", "POST"])
 @login_required
 def register_face():
@@ -619,7 +642,8 @@ def capture_stream():
     if not session.get("capture_name"):
         return redirect(url_for("login"))
     name = session["capture_name"]
-    return Response(generate_capture_frames(name, target=50),
+    target = session.get("capture_target", 50)
+    return Response(generate_capture_frames(name, target=target),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
@@ -627,7 +651,7 @@ def capture_stream():
 @login_required
 def capture_status():
     name  = session.get("capture_name", "")
-    state = capture_state.get(name, {"count": 0, "done": False})
+    state = capture_state.get(name, {"count": 0, "total": 50, "done": False, "existing": 0})
     return jsonify(state)
 
 

@@ -303,6 +303,7 @@
                         <div class="actions">
                             <a href="/members/profile/{{ m.folder_name }}" class="btn-sm btn-view">View</a>
                             <a href="/members/edit/{{ m.folder_name }}" class="btn-sm btn-edit">Edit</a>
+                            <a href="/members/add-photos/{{ m.folder_name }}" class="btn-sm btn-view" title="Add more face photos">📷</a>
                             {% if m.status != 'active' %}
                             <form method="POST" action="/members/renew/{{ m.folder_name }}" style="margin:0;">
                                 <button type="submit" class="btn-sm btn-renew">Renew</button>

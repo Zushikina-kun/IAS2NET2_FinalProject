@@ -128,10 +128,13 @@
     <div class="progress-wrap">
         <div class="progress-header">
             <span class="progress-label">Capture Progress</span>
-            <span class="progress-count"><span id="count">0</span> / 50 photos</span>
+            <span class="progress-count"><span id="count">0</span> / <span id="target">50</span> photos</span>
         </div>
         <div class="bar-track">
             <div class="bar-fill" id="bar"></div>
+        </div>
+        <div id="existing-info" style="display:none;margin-top:8px;font-size:0.75rem;color:#fbbf24;">
+            📁 <span id="existing-count">0</span> existing photos in dataset (adding more)
         </div>
     </div>
 
@@ -151,9 +154,16 @@ function poll() {
     fetch('/capture-status')
         .then(r => r.json())
         .then(data => {
-            const pct = Math.round((data.count / 50) * 100);
+            const total = data.total || 50;
+            const pct = Math.round((data.count / total) * 100);
             bar.style.width = pct + '%';
             count.textContent = data.count;
+            document.getElementById('target').textContent = total;
+
+            if (data.existing > 0) {
+                document.getElementById('existing-info').style.display = 'block';
+                document.getElementById('existing-count').textContent = data.existing;
+            }
 
             if (data.done) {
                 stream.src = '';

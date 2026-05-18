@@ -7,7 +7,8 @@
     "start_date": "2026-01-01",
     "expiry_date": "2026-12-31",
     "contact": "09171234567",
-    "email": "brix@example.com"
+    "email": "brix@example.com",
+    "total_visits": 12
   },
   {
     "folder_name": "Jibreel_Quimson",
@@ -17,7 +18,8 @@
     "start_date": "2026-05-01",
     "expiry_date": "2026-05-31",
     "contact": "09181234567",
-    "email": "jibreel@example.com"
+    "email": "jibreel@example.com",
+    "total_visits": 37
   },
   {
     "folder_name": "Djaunathan_Madayag",
@@ -27,7 +29,8 @@
     "start_date": "2026-04-01",
     "expiry_date": "2026-06-30",
     "contact": "09191234567",
-    "email": "djaunathan@example.com"
+    "email": "djaunathan@example.com",
+    "total_visits": 18
   },
   {
     "folder_name": "Christian_Pobre",

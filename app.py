@@ -35,6 +35,8 @@ DATASET_PATH  = "dataset"
 ENTRY_LOG     = "entry_log.csv"
 MEMBERS_FILE  = "members.json"
 ADMINS_FILE   = "admins.json"
+PAYMENTS_FILE = "payments.json"
+AUDIT_LOG     = "audit_log.csv"
 BACKUP_DIR    = "backups"
 CACHE_FILE    = os.path.join(
     DATASET_PATH,
@@ -192,6 +194,52 @@ def is_superadmin():
     """Check if current user is a superadmin."""
     admin = get_current_admin()
     return admin and admin.get("role") == "superadmin"
+
+
+# ── Payment helpers ───────────────────────────────────────────────────────────
+
+_payments_lock = threading.Lock()
+
+def load_payments():
+    with _payments_lock:
+        if not os.path.exists(PAYMENTS_FILE):
+            return []
+        with open(PAYMENTS_FILE, "r") as f:
+            return json.load(f)
+
+
+def save_payments(payments):
+    with _payments_lock:
+        with open(PAYMENTS_FILE, "w") as f:
+            json.dump(payments, f, indent=2)
+
+
+def get_member_payments(folder_name):
+    return [p for p in load_payments() if p.get("folder_name") == folder_name]
+
+
+# ── Audit log helpers ─────────────────────────────────────────────────────────
+
+_audit_lock = threading.Lock()
+
+def log_audit(action, target, details=""):
+    """Log an admin action to the audit trail."""
+    import csv as csv_mod
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    admin_user = session.get("user", "system")
+    with _audit_lock:
+        file_exists = os.path.exists(AUDIT_LOG)
+        with open(AUDIT_LOG, "a", newline="") as f:
+            writer = csv_mod.writer(f)
+            if not file_exists:
+                writer.writerow(["Timestamp", "Admin", "Action", "Target", "Details"])
+            writer.writerow([now, admin_user, action, target, details])
+
+
+# ── Check-in/Check-out state ─────────────────────────────────────────────────
+
+_checkin_lock = threading.Lock()
+_checked_in = {}  # folder_name -> {"time": datetime_str, "full_name": str}
 
 
 # ── Dataset watcher ───────────────────────────────────────────────────────────
@@ -524,6 +572,7 @@ def add_member():
 
         # Store for face capture
         session["capture_name"] = folder_name
+        log_audit("member_added", full_name, f"Type: {membership_type}, Expiry: {expiry_date}")
         return redirect(url_for("capture_face"))
 
     return render_template("add_member.html", error=None)
@@ -559,6 +608,9 @@ def edit_member(folder_name):
 @app.route("/members/delete/<folder_name>", methods=["POST"])
 @login_required
 def delete_member(folder_name):
+    # Get name before deleting
+    member = get_member_by_folder(folder_name)
+    member_name = member["full_name"] if member else folder_name
     # Remove from member registry
     members = [m for m in load_members() if m["folder_name"] != folder_name]
     save_members(members)
@@ -567,6 +619,7 @@ def delete_member(folder_name):
     if os.path.exists(dataset_folder):
         shutil.rmtree(dataset_folder, ignore_errors=True)
     clear_deepface_cache()
+    log_audit("member_deleted", member_name, f"Folder: {folder_name}")
     return redirect(url_for("members_list"))
 
 
@@ -1020,6 +1073,195 @@ def member_profile(folder_name):
                            total_granted=total_granted,
                            total_denied=total_denied,
                            photo_count=photo_count)
+
+
+# ── Payment tracking ──────────────────────────────────────────────────────────
+
+@app.route("/payments")
+@login_required
+def payments_list():
+    """View all payments with filters."""
+    payments = load_payments()
+    payments.reverse()  # newest first
+
+    # Filter by member
+    member_filter = request.args.get("member", "")
+    if member_filter:
+        payments = [p for p in payments if p.get("folder_name") == member_filter]
+
+    members = load_members()
+    return render_template("payments.html", payments=payments[:100],
+                           members=members, member_filter=member_filter)
+
+
+@app.route("/payments/add", methods=["GET", "POST"])
+@login_required
+def add_payment():
+    """Record a new payment."""
+    members = load_members()
+
+    if request.method == "POST":
+        folder_name = request.form.get("folder_name", "")
+        amount      = request.form.get("amount", "0")
+        method      = request.form.get("method", "cash")
+        description = request.form.get("description", "").strip()
+        payment_date = request.form.get("payment_date", date.today().strftime("%Y-%m-%d"))
+
+        member = next((m for m in members if m["folder_name"] == folder_name), None)
+        if not member:
+            return render_template("add_payment.html", members=members,
+                                   error="Please select a valid member.")
+
+        try:
+            amount_float = float(amount)
+            if amount_float <= 0:
+                raise ValueError()
+        except ValueError:
+            return render_template("add_payment.html", members=members,
+                                   error="Amount must be a positive number.")
+
+        payments = load_payments()
+        payment_id = f"PAY-{datetime.now().strftime('%Y%m%d%H%M%S')}-{len(payments)}"
+        payments.append({
+            "id": payment_id,
+            "folder_name": folder_name,
+            "full_name": member["full_name"],
+            "amount": amount_float,
+            "method": method,
+            "description": description,
+            "date": payment_date,
+            "recorded_by": session.get("user", ""),
+            "recorded_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        })
+        save_payments(payments)
+        log_audit("payment_recorded", member["full_name"],
+                  f"₱{amount_float:.2f} via {method}")
+        return redirect(url_for("payments_list"))
+
+    return render_template("add_payment.html", members=members, error=None)
+
+
+@app.route("/payments/member/<folder_name>")
+@login_required
+def member_payments(folder_name):
+    """View payment history for a specific member."""
+    member = get_member_by_folder(folder_name)
+    if not member:
+        return redirect(url_for("payments_list"))
+    payments = get_member_payments(folder_name)
+    payments.reverse()
+    total_paid = sum(p.get("amount", 0) for p in payments)
+    return render_template("member_payments.html", member=member,
+                           payments=payments, total_paid=total_paid)
+
+
+# ── Membership freeze ─────────────────────────────────────────────────────────
+
+@app.route("/members/freeze/<folder_name>", methods=["POST"])
+@login_required
+def freeze_member(folder_name):
+    """Freeze a membership — pauses the expiry countdown."""
+    members = load_members()
+    member = next((m for m in members if m["folder_name"] == folder_name), None)
+    if not member:
+        return redirect(url_for("members_list"))
+
+    if member.get("status") == "frozen":
+        # Unfreeze — add back the remaining days
+        frozen_on = member.get("frozen_on", "")
+        if frozen_on:
+            try:
+                frozen_date = datetime.strptime(frozen_on, "%Y-%m-%d").date()
+                days_frozen = (date.today() - frozen_date).days
+                old_expiry = datetime.strptime(member["expiry_date"], "%Y-%m-%d").date()
+                new_expiry = old_expiry + timedelta(days=days_frozen)
+                member["expiry_date"] = new_expiry.strftime("%Y-%m-%d")
+            except (ValueError, KeyError):
+                pass
+        member["status"] = "active"
+        member.pop("frozen_on", None)
+        log_audit("membership_unfrozen", member["full_name"],
+                  f"Expiry extended to {member['expiry_date']}")
+    else:
+        # Freeze
+        member["status"] = "frozen"
+        member["frozen_on"] = date.today().strftime("%Y-%m-%d")
+        log_audit("membership_frozen", member["full_name"], "")
+
+    save_members(members)
+    return redirect(url_for("members_list"))
+
+
+# ── Check-in / Check-out ──────────────────────────────────────────────────────
+
+@app.route("/gym-floor")
+@login_required
+def gym_floor():
+    """View who's currently checked in at the gym."""
+    with _checkin_lock:
+        current = dict(_checked_in)
+    return render_template("gym_floor.html", checked_in=current)
+
+
+@app.route("/api/checkin", methods=["POST"])
+@login_required
+def manual_checkin():
+    """Manually check in a member."""
+    folder_name = request.form.get("folder_name", "")
+    member = get_member_by_folder(folder_name)
+    if not member:
+        return jsonify({"success": False, "error": "Member not found"}), 404
+
+    with _checkin_lock:
+        _checked_in[folder_name] = {
+            "full_name": member["full_name"],
+            "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+    return jsonify({"success": True})
+
+
+@app.route("/api/checkout", methods=["POST"])
+@login_required
+def manual_checkout():
+    """Manually check out a member."""
+    folder_name = request.form.get("folder_name", "")
+    with _checkin_lock:
+        if folder_name in _checked_in:
+            del _checked_in[folder_name]
+    return jsonify({"success": True})
+
+
+@app.route("/api/gym-status")
+@login_required
+def gym_status():
+    """API: current gym occupancy."""
+    with _checkin_lock:
+        return jsonify({
+            "count": len(_checked_in),
+            "members": list(_checked_in.values())
+        })
+
+
+# ── Audit log ─────────────────────────────────────────────────────────────────
+
+@app.route("/audit-log")
+@login_required
+def audit_log_page():
+    """View admin audit trail."""
+    if not is_superadmin():
+        return redirect(url_for("dashboard"))
+
+    records = []
+    if os.path.exists(AUDIT_LOG):
+        with open(AUDIT_LOG, "r") as f:
+            reader = csv.reader(f)
+            next(reader, None)  # skip header
+            for row in reader:
+                while len(row) < 5:
+                    row.append("")
+                records.append(row)
+    records.reverse()
+    return render_template("audit_log.html", records=records[:200])
 
 
 # ── About & Help pages ─────────────────────────────────────────────────────────

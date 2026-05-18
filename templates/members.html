@@ -161,6 +161,7 @@
         .pill-active    { background: #064e3b33; color: var(--green); }
         .pill-expired   { background: #7f1d1d33; color: var(--red); }
         .pill-suspended { background: #78350f33; color: var(--yellow); }
+        .pill-frozen    { background: #1e3a5f33; color: #93c5fd; }
         .pill-monthly   { background: #1e3a5f33; color: #93c5fd; }
         .pill-quarterly { background: #3b076433; color: #c4b5fd; }
         .pill-annual    { background: #14532d33; color: #86efac; }
@@ -304,13 +305,21 @@
                             <a href="/members/profile/{{ m.folder_name }}" class="btn-sm btn-view">View</a>
                             <a href="/members/edit/{{ m.folder_name }}" class="btn-sm btn-edit">Edit</a>
                             <a href="/members/add-photos/{{ m.folder_name }}" class="btn-sm btn-view" title="Add more face photos">📷</a>
-                            {% if m.status != 'active' %}
-                            <form method="POST" action="/members/renew/{{ m.folder_name }}" style="margin:0;">
-                                <button type="submit" class="btn-sm btn-renew">Renew</button>
+                            <a href="/payments/member/{{ m.folder_name }}" class="btn-sm btn-view" title="Payment history">💰</a>
+                            {% if m.status == 'active' %}
+                            <form method="POST" action="/members/freeze/{{ m.folder_name }}" style="margin:0;">
+                                <button type="submit" class="btn-sm btn-suspend" title="Freeze membership">❄️</button>
                             </form>
-                            {% else %}
                             <form method="POST" action="/members/suspend/{{ m.folder_name }}" style="margin:0;">
                                 <button type="submit" class="btn-sm btn-suspend">Suspend</button>
+                            </form>
+                            {% elif m.status == 'frozen' %}
+                            <form method="POST" action="/members/freeze/{{ m.folder_name }}" style="margin:0;">
+                                <button type="submit" class="btn-sm btn-renew">Unfreeze</button>
+                            </form>
+                            {% else %}
+                            <form method="POST" action="/members/renew/{{ m.folder_name }}" style="margin:0;">
+                                <button type="submit" class="btn-sm btn-renew">Renew</button>
                             </form>
                             {% endif %}
                             <form method="POST" action="/members/delete/{{ m.folder_name }}" style="margin:0;"

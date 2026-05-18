@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments — Gym Membership System</title>
+    <style>
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        :root{--bg:#0b0f1a;--surface:#111827;--border:#1f2937;--accent:#f97316;--accent2:#fb923c;--green:#22d3a5;--red:#f87171;--yellow:#fbbf24;--text:#f1f5f9;--muted:#64748b;--sub:#94a3b8}
+        body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+        .topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:56px;background:var(--surface);border-bottom:1px solid var(--border)}
+        .topbar-brand{font-size:0.9rem;font-weight:700;letter-spacing:0.5px;text-transform:uppercase}.topbar-brand span{color:var(--accent)}
+        .back-link{font-size:0.82rem;color:var(--muted);text-decoration:none}.back-link:hover{color:var(--text)}
+        .content{max-width:1100px;margin:0 auto;padding:28px}
+        .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+        .page-header h1{font-size:1.2rem;font-weight:600}.page-header p{font-size:0.8rem;color:var(--muted);margin-top:3px}
+        .add-btn{padding:8px 18px;background:var(--accent);color:#fff;border-radius:7px;font-size:0.82rem;font-weight:600;text-decoration:none}
+        .add-btn:hover{background:var(--accent2)}
+        .stats{display:flex;gap:10px;margin-bottom:20px}
+        .stat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 18px}
+        .stat-num{font-size:1.4rem;font-weight:700;line-height:1;color:var(--green)}
+        .stat-label{font-size:0.68rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:0.5px}
+        .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow-x:auto}
+        table{width:100%;border-collapse:collapse}
+        thead th{padding:11px 14px;text-align:left;font-size:0.7rem;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap}
+        tbody td{padding:10px 14px;font-size:0.84rem;border-bottom:1px solid var(--border);color:var(--sub)}
+        tbody tr:last-child td{border-bottom:none}
+        tbody tr:hover td{background:#ffffff04}
+        .amount{color:var(--green);font-weight:600}
+        .pill{display:inline-block;padding:3px 10px;border-radius:4px;font-size:0.73rem;font-weight:600}
+        .pill-cash{background:#064e3b33;color:var(--green)}.pill-card{background:#1e3a5f33;color:#93c5fd}.pill-gcash{background:#1e3a5f33;color:#60a5fa}.pill-bank{background:#3b076433;color:#c4b5fd}
+        .empty{text-align:center;padding:48px;color:var(--muted);font-size:0.85rem}
+    </style>
+</head>
+<body>
+<div class="topbar">
+    <div class="topbar-brand">🏋️ Gym <span>Membership</span> System &nbsp;/&nbsp; Payments</div>
+    <a href="/dashboard" class="back-link">← Dashboard</a>
+</div>
+<div class="content">
+    <div class="page-header">
+        <div>
+            <h1>Payment Records</h1>
+            <p>{{ payments|length }} payment{{ 's' if payments|length != 1 else '' }} recorded</p>
+        </div>
+        <a href="/payments/add" class="add-btn">+ Record Payment</a>
+    </div>
+
+    {% if payments %}
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-num">₱{{ "%.2f"|format(payments|sum(attribute='amount')) }}</div>
+            <div class="stat-label">Total Collected</div>
+        </div>
+        <div class="stat">
+            <div class="stat-num" style="color:var(--accent)">{{ payments|length }}</div>
+            <div class="stat-label">Transactions</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>#</th><th>Member</th><th>Amount</th><th>Method</th><th>Description</th><th>Date</th><th>Recorded By</th></tr></thead>
+            <tbody>
+            {% if payments %}
+                {% for p in payments %}
+                <tr>
+                    <td style="color:var(--muted);font-size:0.75rem">{{ loop.index }}</td>
+                    <td style="color:var(--text);font-weight:500">{{ p.full_name }}</td>
+                    <td class="amount">₱{{ "%.2f"|format(p.amount) }}</td>
+                    <td><span class="pill pill-{{ p.method }}">{{ p.method|capitalize }}</span></td>
+                    <td>{{ p.description or '—' }}</td>
+                    <td>{{ p.date }}</td>
+                    <td style="font-size:0.78rem;color:var(--muted)">{{ p.recorded_by }}</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr><td colspan="7" class="empty">No payments recorded yet. <a href="/payments/add" style="color:var(--accent)">Record one</a>.</td></tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

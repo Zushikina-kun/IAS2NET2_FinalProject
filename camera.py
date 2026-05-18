@@ -57,6 +57,8 @@ def check_membership(folder_name):
         return False, "Membership suspended", member
     if status == "expired":
         return False, "Membership expired", member
+    if status == "frozen":
+        return False, "Membership frozen", member
 
     try:
         if datetime.strptime(expiry, "%Y-%m-%d").date() < date.today():
@@ -310,6 +312,18 @@ def _deepface_worker():
                     )
                     _last_logged["name"] = folder_name
                     _last_logged["time"] = now
+
+                    # Auto check-in when access is granted
+                    if access:
+                        try:
+                            from app import _checkin_lock, _checked_in
+                            with _checkin_lock:
+                                _checked_in[folder_name] = {
+                                    "full_name": full_name,
+                                    "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                                }
+                        except ImportError:
+                            pass
 
             set_status("")
 

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment History — Gym Membership System</title>
+    <style>
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        :root{--bg:#0b0f1a;--surface:#111827;--border:#1f2937;--accent:#f97316;--green:#22d3a5;--text:#f1f5f9;--muted:#64748b;--sub:#94a3b8}
+        body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+        .topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:56px;background:var(--surface);border-bottom:1px solid var(--border)}
+        .topbar-brand{font-size:0.9rem;font-weight:700;letter-spacing:0.5px;text-transform:uppercase}.topbar-brand span{color:var(--accent)}
+        .back-link{font-size:0.82rem;color:var(--muted);text-decoration:none}.back-link:hover{color:var(--text)}
+        .content{max-width:800px;margin:0 auto;padding:28px}
+        .header{display:flex;align-items:center;gap:16px;margin-bottom:24px;padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+        .header img{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--border)}
+        .header h1{font-size:1.1rem;font-weight:600}.header p{font-size:0.8rem;color:var(--muted);margin-top:2px}
+        .total-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center;margin-bottom:20px}
+        .total-num{font-size:2rem;font-weight:700;color:var(--green)}.total-label{font-size:0.75rem;color:var(--muted);margin-top:4px;text-transform:uppercase}
+        .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+        table{width:100%;border-collapse:collapse}
+        thead th{padding:10px 14px;text-align:left;font-size:0.7rem;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border)}
+        tbody td{padding:10px 14px;font-size:0.84rem;border-bottom:1px solid var(--border);color:var(--sub)}
+        tbody tr:last-child td{border-bottom:none}
+        .amount{color:var(--green);font-weight:600}
+        .empty{text-align:center;padding:32px;color:var(--muted);font-size:0.85rem}
+    </style>
+</head>
+<body>
+<div class="topbar">
+    <div class="topbar-brand">🏋️ Gym <span>Membership</span> System &nbsp;/&nbsp; Payment History</div>
+    <a href="/payments" class="back-link">← All Payments</a>
+</div>
+<div class="content">
+    <div class="header">
+        <img src="/member-photo/{{ member.folder_name }}" alt="{{ member.full_name }}">
+        <div>
+            <h1>{{ member.full_name }}</h1>
+            <p>{{ member.membership_type|capitalize }} · {{ member.status|capitalize }}</p>
+        </div>
+    </div>
+    <div class="total-box">
+        <div class="total-num">₱{{ "%.2f"|format(total_paid) }}</div>
+        <div class="total-label">Total Paid ({{ payments|length }} transactions)</div>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>#</th><th>Amount</th><th>Method</th><th>Description</th><th>Date</th></tr></thead>
+            <tbody>
+            {% if payments %}
+                {% for p in payments %}
+                <tr>
+                    <td style="color:var(--muted);font-size:0.75rem">{{ loop.index }}</td>
+                    <td class="amount">₱{{ "%.2f"|format(p.amount) }}</td>
+                    <td>{{ p.method|capitalize }}</td>
+                    <td>{{ p.description or '—' }}</td>
+                    <td>{{ p.date }}</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr><td colspan="5" class="empty">No payments recorded for this member.</td></tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

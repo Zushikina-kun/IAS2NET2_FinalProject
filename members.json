@@ -8,9 +8,13 @@
     "expiry_date": "2026-12-31",
     "contact": "09953583040",
     "email": "brix.arquisal@lorma.edu",
-    "total_visits": 23,
+    "total_visits": 36,
     "emergency_contact": "",
-    "notes": ""
+    "notes": "",
+    "gender": "Male",
+    "birthday": "1999-09-04",
+    "address": "",
+    "registered_at": ""
   },
   {
     "folder_name": "Jibreel_Quimson",
@@ -21,7 +25,13 @@
     "expiry_date": "2026-05-31",
     "contact": "09181234567",
     "email": "jibreel@example.com",
-    "total_visits": 37
+    "total_visits": 37,
+    "gender": "",
+    "birthday": "",
+    "address": "",
+    "emergency_contact": "",
+    "notes": "",
+    "registered_at": ""
   },
   {
     "folder_name": "Djaunathan_Madayag",
@@ -32,7 +42,13 @@
     "expiry_date": "2026-06-30",
     "contact": "09191234567",
     "email": "djaunathan@example.com",
-    "total_visits": 18
+    "total_visits": 18,
+    "gender": "",
+    "birthday": "",
+    "address": "",
+    "emergency_contact": "",
+    "notes": "",
+    "registered_at": ""
   },
   {
     "folder_name": "Christian_Pobre",
@@ -42,7 +58,14 @@
     "start_date": "2026-03-01",
     "expiry_date": "2026-06-01",
     "contact": "09201234567",
-    "email": "christian@example.com"
+    "email": "christian@example.com",
+    "gender": "",
+    "birthday": "",
+    "address": "",
+    "emergency_contact": "",
+    "notes": "",
+    "total_visits": 0,
+    "registered_at": ""
   },
   {
     "folder_name": "Mark_Allen_Almodovar",
@@ -52,7 +75,14 @@
     "start_date": "2026-05-06",
     "expiry_date": "2026-06-06",
     "contact": "09279810821",
-    "email": "markallen.almodovar@lorma.edu"
+    "email": "markallen.almodovar@lorma.edu",
+    "gender": "",
+    "birthday": "",
+    "address": "",
+    "emergency_contact": "",
+    "notes": "",
+    "total_visits": 0,
+    "registered_at": ""
   },
   {
     "folder_name": "Cyrill_Rubis",
@@ -64,7 +94,12 @@
     "contact": "",
     "email": "",
     "total_visits": 0,
-    "registered_at": "2026-05-18 00:00:00"
+    "registered_at": "2026-05-18 00:00:00",
+    "gender": "",
+    "birthday": "",
+    "address": "",
+    "emergency_contact": "",
+    "notes": ""
   },
   {
     "folder_name": "Jan_Alexis_Roldan",
@@ -76,6 +111,11 @@
     "contact": "",
     "email": "",
     "total_visits": 0,
-    "registered_at": "2026-05-18 00:00:00"
+    "registered_at": "2026-05-18 00:00:00",
+    "gender": "",
+    "birthday": "",
+    "address": "",
+    "emergency_contact": "",
+    "notes": ""
   }
 ]

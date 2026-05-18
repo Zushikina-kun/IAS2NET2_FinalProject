@@ -1,8 +1,6 @@
-# Gym Membership System
-### Project Documentation — IAS2 Finals Project
-**Course:** Information Assurance and Security 2
-**Year Level:** 3rd Year BSIT
-**Group Number:** 9
+# Gym Membership System — Technical Documentation
+### IAS2 Finals Project — Group 9
+**Course:** Information Assurance and Security 2 | **Year:** 3rd Year BSIT | **SY:** 2025–2026
 
 | Role | Name |
 |------|------|
@@ -12,589 +10,198 @@
 
 ---
 
-## 1. Project Overview
+## 1. Overview
 
-The Gym Membership System is a full-stack web application that controls gym entry and verifies active members using real-time face recognition. Built with Python, Flask, and DeepFace, the system automatically identifies a person standing in front of the camera, checks their membership status, and grants or denies entry accordingly — all without any manual input.
-
-The system is self-contained and runs entirely on a local machine. No PHP or external database is required.
+A professional gym access control system using real-time AI face recognition. Identifies members via webcam, verifies membership status, grants/denies entry, tracks payments, monitors gym occupancy, and provides business analytics — all without manual input.
 
 ---
 
-## 2. Features
+## 2. Complete Feature List
 
-| Feature | Description |
-|---------|-------------|
-| Face Recognition | Identifies registered gym members using DeepFace (VGG-Face model) |
-| Membership Verification | Checks if the identified member has an active, non-expired membership |
-| Access Control | Grants or denies gym entry based on membership status |
-| Emotion Detection | Detects dominant emotion (Happy, Sad, Angry, Neutral, Fear, Disgust, Surprise) |
-| Gender Prediction | Predicts gender (Man / Woman) from face |
-| Age Estimation | Estimates age as an integer |
-| Live Camera Overlay | Displays name, access result, emotion, gender, and age directly on the video feed |
-| Entry Logging | Logs every entry attempt (granted or denied) to a CSV file with timestamp |
-| Member Management | Add, edit, renew, suspend, and remove members via the web UI |
-| Face Registration | Captures 50 face photos via webcam to register a new member |
-| Live Dashboard Stats | Real-time stats auto-refresh every 5 seconds |
-| Member Thumbnails | Shows a profile photo from each member's dataset on the members page |
-| Expiry Alerts | Dashboard warns when any active member has 7 or fewer days left |
-| Date-filtered Entry Log | Entry log can be filtered by date |
-| CSV Export | Export entry logs as downloadable CSV files |
-| Admin Login | Username/password login with rate limiting and session timeout |
-| Login Rate Limiting | Locks account after 5 failed attempts for 5 minutes |
-| Session Timeout | Auto-logout after 2 hours of inactivity |
-| Security Headers | X-Content-Type-Options, X-Frame-Options, X-XSS-Protection |
-| Member Search | Search/filter members by name, type, status, contact, or email |
-| Member Profiles | Detailed member profile page with attendance history |
-| Attendance Analytics | Charts showing daily entries, hourly distribution, top visitors, emotions |
-| Data Backup & Restore | Create and restore backups of member data and entry logs |
-| Visit Counter | Tracks total visits per member automatically |
-| Suspend/Activate | Quick toggle to suspend or reactivate members |
-| Emergency Contact | Store emergency contact info for each member |
-| Member Notes | Add notes to member records |
+| Category | Feature |
+|----------|---------|
+| **Recognition** | Face identification (VGG-Face, cosine distance ≤0.40) |
+| **Recognition** | Emotion detection (7 emotions) |
+| **Recognition** | Gender prediction, age estimation |
+| **Recognition** | Live camera overlay with all info |
+| **Access** | Auto grant/deny based on membership status |
+| **Access** | Auto check-in to Gym Floor on granted entry |
+| **Access** | 10-second cooldown per person (prevents spam) |
+| **Members** | Add, edit, view profile, search, delete |
+| **Members** | Gender, birthday, address, email, phone, emergency contact, notes |
+| **Members** | Face registration (50 photos, 224×224, CLAHE normalized) |
+| **Members** | Add more photos to improve accuracy |
+| **Members** | Visit counter (auto-incremented) |
+| **Membership** | Types: monthly, quarterly, annual |
+| **Membership** | Statuses: active, expired, suspended, frozen |
+| **Membership** | Auto-expiry detection on page load |
+| **Membership** | Renew (extends from expiry or today) |
+| **Membership** | Freeze/unfreeze (pauses expiry countdown) |
+| **Membership** | Suspend/activate toggle |
+| **Payments** | Record payments (cash, GCash, card, bank) |
+| **Payments** | Per-member payment history with totals |
+| **Payments** | Payment date, description, recorded-by tracking |
+| **Monitoring** | Live dashboard (7 stats, 5s refresh) |
+| **Monitoring** | Gym Floor (real-time occupancy) |
+| **Monitoring** | Entry log with date filter + CSV export |
+| **Monitoring** | Expiry alerts (≤7 days warning) |
+| **Analytics** | Daily entries chart (30 days) |
+| **Analytics** | Hourly distribution |
+| **Analytics** | Top visitors ranking |
+| **Analytics** | Emotion breakdown |
+| **Analytics** | Peak hour detection |
+| **Admin** | Multi-admin accounts (admins.json) |
+| **Admin** | Roles: superadmin, staff |
+| **Admin** | Create/delete admin accounts |
+| **Admin** | Audit log (all actions tracked) |
+| **Security** | SHA-256 password hashing |
+| **Security** | Login rate limiting (5 attempts → 5min lockout) |
+| **Security** | Session timeout (2hr inactivity) |
+| **Security** | Security headers (nosniff, SAMEORIGIN, XSS, Referrer) |
+| **Security** | HttpOnly + SameSite cookies |
+| **Security** | Input sanitization, path traversal prevention |
+| **Security** | Thread-safe file operations |
+| **Data** | Backup all data files (members, payments, admins, logs) |
+| **Data** | Restore from any backup |
+| **Data** | Dataset normalizer utility (224×224, CLAHE, clean names) |
+| **UI** | About page, Help page with FAQ |
+| **UI** | Dark theme, responsive design |
 
 ---
 
-## 3. System Architecture
+## 3. Architecture
 
 ```
-[ Browser ]
+[ Browser — http://localhost:5000 ]
      |
      v
-[ Flask Server — http://localhost:5000 ]
+[ Flask Server (app.py) ]
      |
-     ├── /                    → Login page (rate-limited)
-     ├── /dashboard           → Live camera feed + stats
-     ├── /video               → MJPEG camera stream
-     ├── /members             → Member list with search & photos
-     ├── /members/add         → Add new member + face capture
-     ├── /members/edit/<name> → Edit member details
-     ├── /members/profile/<n> → Detailed member profile + history
-     ├── /members/renew/<name>→ Renew expired membership
-     ├── /members/suspend/<n> → Toggle suspend/activate
-     ├── /members/delete/<name>→ Remove member + dataset
-     ├── /entry-log           → Entry log with date filter
-     ├── /entry-log/export    → Download CSV export
-     ├── /analytics           → Attendance analytics & charts
-     ├── /register-face       → Register face for existing member
-     ├── /capture-face        → Live capture progress page
-     ├── /backups             → Backup management page
-     ├── /backup              → Create backup (POST)
-     ├── /backup/restore/<id> → Restore from backup (POST)
-     ├── /member-photo/<name> → Serves member profile photo
-     ├── /api/stats           → JSON endpoint for live dashboard stats
-     ├── /recognition-status  → JSON endpoint for current detection state
-     └── /logout              → Clears session
+     ├── Auth: login, register, logout, rate limiting
+     ├── Dashboard: live stats, camera feed
+     ├── Members: CRUD, search, profiles, freeze, suspend
+     ├── Payments: record, history, per-member view
+     ├── Entry Log: view, filter, export CSV
+     ├── Gym Floor: live occupancy, manual checkout
+     ├── Analytics: charts, top visitors, emotions
+     ├── Backups: create, restore (all data files)
+     ├── Audit Log: admin action trail
+     ├── Admin Accounts: create, delete, roles
+     └── About / Help: info pages
      |
      v
 [ camera.py — Background Threads ]
-     |
-     ├── CameraStream         → Reads webcam frames continuously (daemon thread)
-     ├── _deepface_worker     → Runs DeepFace in background (never blocks video)
-     │     ├── DeepFace.find()    → Identifies person from dataset
-     │     ├── check_membership() → Checks members.json for status
-     │     └── DeepFace.analyze() → Emotion, gender, age
-     └── generate_frames()    → Yields MJPEG frames with overlays drawn
+     ├── CameraStream (daemon) — reads webcam 640×480 @ 30fps
+     ├── _deepface_worker (daemon) — runs DeepFace every 10 frames
+     │     ├── DeepFace.find() → identity (cosine ≤ 0.40)
+     │     ├── check_membership() → grant/deny
+     │     ├── DeepFace.analyze() → emotion, gender, age
+     │     └── Auto check-in → Gym Floor
+     └── generate_frames() → MJPEG stream with overlays
 ```
 
 ---
 
-## 4. Technologies Used
+## 4. Data Files
 
-| Technology | Purpose |
-|---|---|
-| Python 3.10 | Core backend language |
-| Flask | Web framework / HTTP server |
-| DeepFace | Face recognition, emotion, gender & age analysis |
-| OpenCV | Camera access, face detection (Haar Cascade), image processing |
-| Watchdog | Monitors dataset folder, clears DeepFace cache on changes |
-| HTML / CSS / JavaScript | Frontend UI (no external frameworks) |
-| JSON (members.json) | Member registry storage |
-| CSV (entry_log.csv) | Entry log storage |
+| File | Format | Purpose |
+|------|--------|---------|
+| `members.json` | JSON array | Member registry with all personal info |
+| `admins.json` | JSON array | Admin accounts with hashed passwords |
+| `payments.json` | JSON array | Payment transaction records |
+| `entry_log.csv` | CSV | Every entry attempt (name, time, access, emotion, etc.) |
+| `audit_log.csv` | CSV | Admin action trail (timestamp, admin, action, target) |
+| `dataset/` | Folders of JPGs | Face photos per member (224×224 normalized) |
 
 ---
 
-## 5. Project File Structure
+## 5. API Endpoints
 
-```
-IAS2NET2FinalProject/
-│
-├── app.py                  # Flask application — all routes and logic
-├── camera.py               # Camera stream, DeepFace worker, overlays
-├── members.json            # Member registry (name, membership, status, dates)
-├── entry_log.csv           # Auto-generated entry log
-├── database.sql            # Reference SQL schema (not required to run)
-├── requirements.txt        # Python dependencies
-├── run.bat                 # Double-click to start the server
-├── DOCUMENTATION.md        # This file
-│
-├── dataset/                # Face image database (one folder per person)
-│   ├── Brix_Directo/
-│   │   ├── 0.jpg
-│   │   └── ... (50 photos)
-│   ├── Jibreel_Quimson/
-│   ├── Djaunathan_Madayag/
-│   ├── Christian_Pobre/
-│   └── <Any_New_Member>/
-│
-├── backups/                # Data backup snapshots
-│   └── 20260518_143000/    # Timestamped backup folders
-│       ├── members.json
-│       └── entry_log.csv
-│
-├── templates/              # Flask HTML templates (Jinja2)
-│   ├── login.html          # Admin login page
-│   ├── index.html          # Dashboard — camera feed + live stats
-│   ├── members.html        # Member list with search & thumbnails
-│   ├── add_member.html     # Add new member form
-│   ├── edit_member.html    # Edit member details form
-│   ├── member_profile.html # Detailed member profile + history
-│   ├── entry_log.html      # Entry log table with date filter + export
-│   ├── analytics.html      # Attendance analytics & charts
-│   ├── backups.html        # Backup management page
-│   ├── register_face.html  # Face registration form
-│   ├── capture_face.html   # Live capture with progress bar
-│   └── 404.html            # Error page
-│
-├── static/
-│   └── style.css           # Global CSS variables
-│
-└── venv/                   # Python virtual environment (pre-installed)
-```
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/api/stats` | GET | Live dashboard stats (JSON) |
+| `/recognition-status` | GET | Current face detection state (JSON) |
+| `/api/gym-status` | GET | Current gym occupancy (JSON) |
+| `/api/checkin` | POST | Manual member check-in |
+| `/api/checkout` | POST | Manual member check-out |
+| `/capture-status` | GET | Face capture progress (JSON) |
+| `/backup` | POST | Create data backup |
+| `/backup/restore/<id>` | POST | Restore from backup |
 
 ---
 
-## 6. Setup Guide (Fresh Machine)
+## 6. Security Implementation
 
-### Step 1 — Prerequisites
-
-- **Python 3.10+** — https://www.python.org/downloads/
-  - During install, tick **"Add Python to PATH"**
-- A working **webcam**
-- A **stable internet connection** for first-time DeepFace model downloads (~1.7 GB total)
-
-> XAMPP is **not required** to run this project. The system is fully self-contained in Flask.
-
----
-
-### Step 2 — Place the Project
-
-Copy the project folder anywhere on your machine. Recommended:
-
-```
-C:\xampp\htdocs\IAS2NET2FinalProject\
-```
+| Layer | Implementation |
+|-------|----------------|
+| Authentication | SHA-256 hashed passwords, multi-admin accounts |
+| Authorization | Role-based (superadmin/staff), `@login_required` decorator |
+| Rate limiting | 5 failed logins → 5-minute IP lockout |
+| Session | 2-hour timeout, HttpOnly, SameSite=Lax |
+| Headers | X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy |
+| Input | Folder names: alphanumeric + underscore only |
+| Files | Path traversal prevention, thread locks on all writes |
+| Audit | Every admin action logged with timestamp and username |
 
 ---
 
-### Step 3 — Set Up the Python Virtual Environment
+## 7. Setup Guide
 
-Open a terminal inside the project folder and run:
+See **README.md** for step-by-step installation instructions.
 
+**Quick start:**
 ```bash
-# Create virtual environment
-python -m venv venv
-
-# Activate it
-venv\Scripts\activate
-
-# Install all dependencies
+git clone https://github.com/Zushikina-kun/IAS2NET2_FinalProject.git
+cd IAS2NET2_FinalProject
+python -m venv venv && venv\Scripts\activate
 pip install -r requirements.txt
-```
-
-> Installation takes several minutes. TensorFlow and DeepFace are large packages.
-
----
-
-### Step 4 — Pre-download DeepFace Model Weights (Recommended)
-
-Run this once on a stable connection to pre-download all model weights:
-
-```bash
-venv\Scripts\python.exe -c "from deepface import DeepFace; import numpy as np; DeepFace.analyze(np.zeros((224,224,3), dtype='uint8'), actions=['emotion','gender','age'], enforce_detection=False)"
-```
-
-This downloads to `C:\Users\<YourName>\.deepface\weights\`:
-
-| File | Size | Purpose |
-|------|------|---------|
-| vgg_face_weights.h5 | ~580 MB | Face recognition |
-| facial_expression_model_weights.h5 | ~21 MB | Emotion detection |
-| gender_model_weights.h5 | ~534 MB | Gender prediction |
-| age_model_weights.h5 | ~539 MB | Age estimation |
-
----
-
-### Step 5 — Start the Server
-
-**Option A — Double-click `run.bat`**
-
-**Option B — Terminal:**
-```bash
-venv\Scripts\python.exe app.py
-```
-
-You should see:
-```
-[camera] Camera ready.
- * Running on http://127.0.0.1:5000
+python app.py
+# Open http://localhost:5000 — Login: admin / admin123
 ```
 
 ---
 
-### Step 6 — Open the Application
+## 8. Dataset Management
 
-Go to: **http://localhost:5000**
-
-Login with:
-- **Username:** `admin`
-- **Password:** `admin123`
-
----
-
-## 7. How the System Works
-
-### Entry Verification Flow
-
-```
-Person stands in front of camera
-        |
-        v
-OpenCV Haar Cascade detects face region
-        |
-        v
-Every 5 frames → face crop sent to background DeepFace worker
-        |
-        v
-DeepFace.find() compares face against dataset/
-  ├── Match found (distance ≤ 0.35) → folder_name = member identity
-  └── No match / weak match         → folder_name = "Unknown"
-        |
-        v
-check_membership(folder_name)
-  ├── Status = active + not expired → ACCESS GRANTED (green overlay)
-  ├── Status = expired              → ACCESS DENIED  (red overlay)
-  ├── Status = suspended            → ACCESS DENIED  (red overlay)
-  └── Not in members.json           → ACCESS DENIED  (red overlay)
-        |
-        v
-DeepFace.analyze() → emotion, gender, age
-        |
-        v
-Result drawn on camera overlay + shown in dashboard banner
-        |
-        v
-Entry logged to entry_log.csv (with 10-second cooldown per person)
-        |
-        v
-Member's total_visits counter incremented (on granted access)
-```
-
-### Recognition Accuracy
-
-- DeepFace uses the **VGG-Face** model with **cosine distance**
-- Threshold is set to **0.35** (stricter than the default 0.40) to reduce false matches
-- Matches with distance > 0.35 are rejected and shown as "Unknown"
-- More photos per person = better accuracy. Minimum recommended: **50 photos**
+- Each member has a folder in `dataset/` with 50+ face photos
+- Photos are 224×224 pixels, JPEG, CLAHE contrast-enhanced
+- Run `python normalize_dataset.py` to clean up and normalize all images
+- DeepFace cache (`.pkl`) auto-clears when dataset changes
+- More photos + varied lighting = better recognition accuracy
 
 ---
 
-## 8. Member Management
+## 9. Membership Statuses
 
-### Membership Types
-
-| Type | Duration |
-|------|----------|
-| Monthly | 1 month from start date |
-| Quarterly | 3 months from start date |
-| Annual | 1 year from start date |
-
-### Membership Statuses
-
-| Status | Entry Result |
-|--------|-------------|
-| Active (not expired) | ACCESS GRANTED |
-| Active (date expired) | ACCESS DENIED — auto-detected on members page load |
-| Expired | ACCESS DENIED |
-| Suspended | ACCESS DENIED |
-
-### Renewing a Membership
-
-On the Members page, expired or suspended members show a **Renew** button. Clicking it extends the membership from the current expiry date (or today if already past) by the member's plan duration.
-
-### Suspending a Member
-
-Active members show a **Suspend** button. Suspended members are denied entry until reactivated. Click Suspend again (or Renew) to reactivate.
-
-### Deleting a Member
-
-Removing a member from the Members page also **deletes their face dataset folder** so DeepFace can no longer recognize them. The DeepFace cache is cleared automatically.
-
-### Member Profile
-
-Click **View** on any member to see their detailed profile including:
-- Membership details and contact info
-- Total visits and entry history
-- Number of face photos in their dataset
-- Last 50 entry log records for that member
+| Status | Entry | Description |
+|--------|-------|-------------|
+| Active | ✅ Granted | Valid membership, not expired |
+| Expired | ❌ Denied | Date passed (auto-detected) |
+| Suspended | ❌ Denied | Manually paused by admin |
+| Frozen | ❌ Denied | Temporarily paused, expiry countdown stopped |
 
 ---
 
-## 9. Registering New Faces
+## 10. Admin Roles
 
-### Via Add Member (recommended)
-
-1. Go to **Members → + Add Member**
-2. Fill in full name, membership type, dates, contact, emergency contact
-3. Click **Save & Capture Face**
-4. The camera opens — keep your face in frame
-5. 50 photos are auto-captured with a progress bar
-6. On completion, you're redirected to the Members page
-
-### Via Register Face (for existing members)
-
-1. Go to **Register Face** from the dashboard
-2. Enter the member's exact folder name (e.g. `Juan_Dela_Cruz`)
-3. 50 photos are captured and saved to `dataset/<folder_name>/`
-
-### Tips for Best Recognition Accuracy
-
-- Face the camera directly in good, even lighting
-- Avoid hats, sunglasses, or heavy shadows
-- Slightly vary your angle across the 50 shots
-- Avoid blurry or dark photos — the capture only saves when a face is detected
-- If recognition is wrong, re-register with fresh photos
-
----
-
-## 10. Entry Log
-
-- File: `entry_log.csv`
-- Columns: `Name, Time, Access, Reason, Emotion, Gender, Age, Confidence`
-- Each person is logged with a **10-second cooldown** to avoid spam entries
-- The web UI shows the log newest-first with granted/denied stats
-- Can be filtered by date using the date picker
-- Can be **exported as CSV** via the Export button
-- Can be cleared via the **Clear Log** button
-
-Example row:
-```
-Brix Directo,2026-05-06 10:23:11,granted,Active member,Happy,Man,22,94.50
-```
-
----
-
-## 11. Live Dashboard
-
-The dashboard auto-refreshes every 5 seconds via `/api/stats` and shows:
-
-| Stat | Description |
+| Role | Permissions |
 |------|-------------|
-| Total Members | All registered members |
-| Active | Members with active status |
-| Expired | Members with expired status |
-| Suspended | Members with suspended status |
-| Today's Entries | Total entry attempts today |
-| Granted Today | Successful entries today |
-| Denied Today | Denied entries today |
-
-A pulsing green dot on "Today's Entries" indicates live updates.
-
-An orange warning banner appears automatically when any active member has **7 or fewer days** until expiry.
+| **Superadmin** | Everything: members, payments, backups, admin accounts, audit log |
+| **Staff** | Members, payments, entry log, analytics, backups. Cannot manage admins or view audit log. |
 
 ---
 
-## 12. Analytics
+## 11. Troubleshooting
 
-The Analytics page (`/analytics`) provides visual insights:
-
-| Chart | Description |
-|-------|-------------|
-| Daily Entries (30 days) | Bar chart of granted/denied entries per day |
-| Hourly Distribution | Shows which hours are busiest |
-| Top Visitors | Ranked list of most frequent members |
-| Emotion Breakdown | Distribution of detected emotions |
-| Peak Hour | The busiest hour of the day |
-
----
-
-## 13. Backup & Restore
-
-The system includes a data backup feature accessible from the dashboard:
-
-- **Create Backup**: Saves a timestamped copy of `members.json` and `entry_log.csv`
-- **Restore**: Overwrites current data with a previous backup
-- Backups are stored in the `backups/` directory
-- Each backup is a folder named with the timestamp (e.g., `20260518_143000`)
+| Problem | Solution |
+|---------|----------|
+| Camera "initializing" forever | Kill stale Python processes, restart |
+| All faces "Unknown" | Delete `~/.deepface/weights/vgg_face_weights.h5`, restart |
+| Wrong person identified | Add more photos via member profile, run `normalize_dataset.py` |
+| Port 5000 in use | `netstat -ano \| findstr :5000` → `taskkill /PID <PID> /F` |
+| Login locked out | Wait 5 minutes or restart server |
+| Gender/birthday not saving | Fixed in v2.0 — `load_members()` auto-migrates old records |
 
 ---
 
-## 14. Security Features
-
-| Feature | Implementation |
-|---------|----------------|
-| Admin login | Username + SHA-256 hashed password comparison |
-| Login rate limiting | 5 failed attempts → 5-minute lockout per IP |
-| Session timeout | Auto-logout after 2 hours of inactivity |
-| Route protection | All routes use `@login_required` decorator |
-| Security headers | X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy |
-| Input sanitization | Member folder names filtered to alphanumeric + underscore only |
-| Path traversal prevention | `member-photo` route sanitizes folder name before file access |
-| Concurrent write protection | `members.json` writes use a threading lock |
-| Entry log write protection | CSV writes use a threading lock with proper quoting |
-| Flask secret key | Reads from `FLASK_SECRET_KEY` environment variable |
-| Flask debug mode | Reads from `FLASK_DEBUG` environment variable (off by default) |
-| Session cookies | HttpOnly + SameSite=Lax |
-| Dataset cache management | DeepFace `.pkl` cache auto-cleared on dataset changes via Watchdog |
-| Date validation | Expiry date must be after start date |
-
----
-
-## 15. Python Dependencies
-
-| Package | Version | Purpose |
-|---------|---------|---------|
-| flask | >=3.1.0 | Web framework |
-| deepface | >=0.0.99 | Face recognition, emotion, gender, age |
-| opencv-python | >=4.13.0 | Camera access, face detection, image processing |
-| numpy | >=2.2.0 | Numerical operations |
-| pillow | >=12.0.0 | Image handling |
-| tensorflow | >=2.21.0 | Deep learning backend for DeepFace |
-| tf-keras | >=2.21.0 | Keras compatibility layer |
-| pandas | >=2.3.0 | DataFrame handling for DeepFace results |
-| scipy | >=1.11.0 | Scientific computing |
-| watchdog | >=3.0.0 | File system monitoring for dataset folder |
-
----
-
-## 16. Troubleshooting
-
-### Camera shows "initializing" and never loads
-
-Another process is holding the webcam. Kill all stale Python processes:
-
-```powershell
-Get-Process python | Stop-Process -Force
-```
-
-Then restart the server. The system automatically tries multiple camera backends (DSHOW, MSMF) and indices (0, 1) until one works.
-
----
-
-### Face recognized as wrong person
-
-The recognition threshold may need tightening, or the person needs more training photos. Steps to fix:
-
-1. Go to **Register Face**, enter the person's folder name, and recapture 50 fresh photos
-2. Make sure photos are taken in varied lighting and slight angle changes
-3. The system uses a cosine distance threshold of 0.35 — matches above this are rejected as "Unknown"
-
----
-
-### All faces show as "Unknown"
-
-The VGG-Face weights file is missing or corrupted. Delete and re-download:
-
-```bash
-del "%USERPROFILE%\.deepface\weights\vgg_face_weights.h5"
-```
-
-Restart the server. It will re-download (~580 MB) on startup.
-
----
-
-### Emotion / gender / age not showing
-
-Model weights are missing. Delete and re-download:
-
-```bash
-del "%USERPROFILE%\.deepface\weights\facial_expression_model_weights.h5"
-del "%USERPROFILE%\.deepface\weights\gender_model_weights.h5"
-del "%USERPROFILE%\.deepface\weights\age_model_weights.h5"
-```
-
-Restart the server.
-
----
-
-### "Address already in use" on port 5000
-
-A stale Flask process is still running. Find and kill it:
-
-```bash
-netstat -ano | findstr :5000
-taskkill /PID <PID_NUMBER> /F
-```
-
----
-
-### Stats on dashboard not updating
-
-The `/api/stats` endpoint requires an active session. If you were logged out (session timeout after 2 hours), log back in and the stats will resume updating.
-
----
-
-### Member photo thumbnail broken
-
-The member's dataset folder name in `members.json` must exactly match the folder name in `dataset/`. Check for typos or capitalization differences.
-
----
-
-### Login locked out
-
-After 5 failed login attempts, the system locks the IP for 5 minutes. Wait for the lockout to expire, or restart the server to clear the in-memory rate limit state.
-
----
-
-## 17. Registered Members
-
-| Full Name | Folder | Membership | Status |
-|-----------|--------|------------|--------|
-| Brix Directo | Brix_Directo | Annual | Active |
-| Jibreel Quimson | Jibreel_Quimson | Monthly | Active |
-| Djaunathan Madayag | Djaunathan_Madayag | Quarterly | Active |
-| Christian Pobre | Christian_Pobre | Monthly | Active |
-| Brix Arquisal Directo | Brix_Arquisal_Directo | Annual | Active |
-| Mark Allen Almodovar | Mark_Allen_Almodovar | Annual | Active |
-
----
-
-## 18. System Flow Diagram
-
-```
-User opens browser → http://localhost:5000
-        |
-        v
-  login.html (rate-limited, 5 attempts max)
-  ┌──────────────────────┐
-  │  Username + Password │ → admin / admin123
-  └──────────────────────┘
-        |
-        v (login success → session set, 2hr timeout)
-  index.html — Dashboard
-  ┌──────────────────────────────────────────┐
-  │  Live camera feed (MJPEG stream)         │
-  │  7 live stat cards (refresh every 5s)    │
-  │  Expiring soon alert (if applicable)     │
-  │  Access granted/denied banner            │
-  │  Navigation: Members, Entry Log,         │
-  │    Analytics, Register Face, Backups     │
-  └──────────────────────────────────────────┘
-        |
-        v (face detected)
-  camera.py background worker
-  ┌──────────────────────────────────────────┐
-  │  DeepFace.find()    → identity           │
-  │  check_membership() → grant / deny       │
-  │  DeepFace.analyze() → emotion/gender/age │
-  │  log_entry()        → entry_log.csv      │
-  │  increment visits   → members.json       │
-  └──────────────────────────────────────────┘
-        |
-        v
-  Camera overlay updated + dashboard banner shown
-```
-
----
-
-*Documentation prepared for IAS2 Finals Project — Group 9 — 3rd Year BSIT*
-*Lorma Colleges — School Year 2025–2026*
+*Lorma Colleges — IAS2 Finals Project — Group 9 — May 2026*

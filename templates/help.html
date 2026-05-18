@@ -54,8 +54,12 @@
         <div class="shortcut"><div class="path">/members</div><div class="desc">View, search, manage all members</div></div>
         <div class="shortcut"><div class="path">/members/add</div><div class="desc">Register a new gym member</div></div>
         <div class="shortcut"><div class="path">/entry-log</div><div class="desc">View all entry attempts with filters</div></div>
+        <div class="shortcut"><div class="path">/gym-floor</div><div class="desc">Live gym occupancy (who's inside now)</div></div>
+        <div class="shortcut"><div class="path">/payments</div><div class="desc">Payment records & history</div></div>
+        <div class="shortcut"><div class="path">/payments/add</div><div class="desc">Record a new payment</div></div>
         <div class="shortcut"><div class="path">/analytics</div><div class="desc">Charts, peak hours, top visitors</div></div>
         <div class="shortcut"><div class="path">/backups</div><div class="desc">Create & restore data backups</div></div>
+        <div class="shortcut"><div class="path">/audit-log</div><div class="desc">Admin action trail (superadmin only)</div></div>
         <div class="shortcut"><div class="path">/register</div><div class="desc">Manage admin accounts (superadmin only)</div></div>
         <div class="shortcut"><div class="path">/about</div><div class="desc">System info & tech stack</div></div>
     </div>
@@ -101,6 +105,22 @@
         <div class="faq-item">
             <div class="faq-q">How do I export entry logs? <span class="arrow">▶</span></div>
             <div class="faq-a">Go to <strong>Entry Log</strong>, optionally filter by date, then click the <strong>"Export CSV"</strong> button. The file downloads immediately with all matching records.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">How do I record a payment? <span class="arrow">▶</span></div>
+            <div class="faq-a">Go to <strong>Payments → Record Payment</strong>. Select the member, enter the amount, choose the payment method (cash, GCash, card, bank transfer), and add a description. All payments are logged with who recorded them and when.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">What does "Freeze" do? <span class="arrow">▶</span></div>
+            <div class="faq-a"><strong>Freezing</strong> pauses a membership — the expiry countdown stops. When you unfreeze, the expiry date is extended by the number of days it was frozen. Use this for medical leave, vacations, or temporary holds. Frozen members are denied entry.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">What is the Gym Floor page? <span class="arrow">▶</span></div>
+            <div class="faq-a">The <strong>Gym Floor</strong> shows who is currently inside the gym in real-time. Members are automatically checked in when face recognition grants them access. Staff can manually check out members when they leave. The count resets when the server restarts.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q">What does the Audit Log track? <span class="arrow">▶</span></div>
+            <div class="faq-a">The audit log records every admin action: adding/deleting members, suspending/freezing/renewing memberships, recording payments, creating backups, and restoring data. It shows who did what and when. Only superadmins can view it.</div>
         </div>
     </div>
 

@@ -286,7 +286,7 @@
                     <td style="font-size:0.8rem;">{{ m.start_date }}</td>
                     <td style="font-size:0.8rem;">{{ m.expiry_date }}</td>
                     <td>
-                        {% if m.days_left is not none and m.status == 'active' %}
+                        {% if m.days_left is not none and m.status in ['active', 'frozen'] %}
                             {% if m.days_left <= 7 %}
                                 <span style="color:var(--red);font-weight:600;font-size:0.82rem;">{{ m.days_left }}d</span>
                             {% elif m.days_left <= 30 %}
@@ -294,6 +294,7 @@
                             {% else %}
                                 <span style="color:var(--green);font-size:0.82rem;">{{ m.days_left }}d</span>
                             {% endif %}
+                            {% if m.status == 'frozen' %}<span style="color:#93c5fd;font-size:0.7rem;"> ❄️</span>{% endif %}
                         {% else %}
                             <span style="color:var(--muted);font-size:0.8rem;">—</span>
                         {% endif %}

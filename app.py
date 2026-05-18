@@ -441,6 +441,7 @@ def dashboard():
     active    = sum(1 for m in members if m.get("status") == "active")
     expired   = sum(1 for m in members if m.get("status") == "expired")
     suspended = sum(1 for m in members if m.get("status") == "suspended")
+    frozen    = sum(1 for m in members if m.get("status") == "frozen")
 
     # Members expiring within 7 days
     expiring_soon = []
@@ -472,6 +473,7 @@ def dashboard():
                            active=active,
                            expired=expired,
                            suspended=suspended,
+                           frozen=frozen,
                            today_entries=today_entries,
                            expiring_soon=expiring_soon)
 
@@ -498,6 +500,13 @@ def members_list():
                 if exp < today:
                     m["status"] = "expired"
                     changed = True
+                m["days_left"] = (exp - today).days
+            except (ValueError, KeyError):
+                m["days_left"] = None
+        elif m.get("status") == "frozen":
+            # Frozen members: show days_left but don't auto-expire
+            try:
+                exp = datetime.strptime(m["expiry_date"], "%Y-%m-%d").date()
                 m["days_left"] = (exp - today).days
             except (ValueError, KeyError):
                 m["days_left"] = None
@@ -641,8 +650,10 @@ def suspend_member(folder_name):
     if member:
         if member["status"] == "suspended":
             member["status"] = "active"
+            log_audit("member_activated", member["full_name"], "Unsuspended")
         else:
             member["status"] = "suspended"
+            log_audit("member_suspended", member["full_name"], "")
         save_members(members)
     return redirect(url_for("members_list"))
 
@@ -979,6 +990,8 @@ def renew_member(folder_name):
     member["expiry_date"] = new_expiry.strftime("%Y-%m-%d")
     member["status"]      = "active"
     save_members(members)
+    log_audit("member_renewed", member["full_name"],
+              f"New expiry: {member['expiry_date']}, Type: {mtype}")
     return redirect(url_for("members_list"))
 
 
@@ -987,16 +1000,16 @@ def renew_member(folder_name):
 @app.route("/backup", methods=["POST"])
 @login_required
 def create_backup():
-    """Create a backup of members.json and entry_log.csv."""
+    """Create a backup of all data files."""
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     backup_subdir = os.path.join(BACKUP_DIR, timestamp)
     os.makedirs(backup_subdir, exist_ok=True)
 
-    if os.path.exists(MEMBERS_FILE):
-        shutil.copy2(MEMBERS_FILE, os.path.join(backup_subdir, "members.json"))
-    if os.path.exists(ENTRY_LOG):
-        shutil.copy2(ENTRY_LOG, os.path.join(backup_subdir, "entry_log.csv"))
+    for src_file in [MEMBERS_FILE, ENTRY_LOG, PAYMENTS_FILE, ADMINS_FILE, AUDIT_LOG]:
+        if os.path.exists(src_file):
+            shutil.copy2(src_file, os.path.join(backup_subdir, os.path.basename(src_file)))
 
+    log_audit("backup_created", timestamp, "")
     return jsonify({"success": True, "backup_id": timestamp})
 
 
@@ -1027,14 +1040,19 @@ def restore_backup(backup_id):
     if not os.path.isdir(backup_path):
         return jsonify({"success": False, "error": "Backup not found"}), 404
 
-    members_backup = os.path.join(backup_path, "members.json")
-    log_backup = os.path.join(backup_path, "entry_log.csv")
+    # Restore all files that exist in the backup
+    restore_map = {
+        "members.json": MEMBERS_FILE,
+        "entry_log.csv": ENTRY_LOG,
+        "payments.json": PAYMENTS_FILE,
+        "admins.json": ADMINS_FILE,
+    }
+    for backup_name, dest_path in restore_map.items():
+        src = os.path.join(backup_path, backup_name)
+        if os.path.exists(src):
+            shutil.copy2(src, dest_path)
 
-    if os.path.exists(members_backup):
-        shutil.copy2(members_backup, MEMBERS_FILE)
-    if os.path.exists(log_backup):
-        shutil.copy2(log_backup, ENTRY_LOG)
-
+    log_audit("backup_restored", safe_id, "")
     return jsonify({"success": True})
 
 

@@ -12,7 +12,9 @@
 
 ## 1. Overview
 
-A professional gym access control system using real-time AI face recognition. Identifies members via webcam, verifies membership status, grants/denies entry, tracks payments, monitors gym occupancy, and provides business analytics — all without manual input.
+**IronGate** is a professional gym access control and membership management system using real-time AI face recognition. The system serves as both a public-facing gym website (with services, membership plans, and facility info) and a complete admin backend for managing members, payments, attendance, and analytics — all powered by face recognition entry control.
+
+The system identifies members via webcam, verifies membership status, grants/denies entry, tracks payments, monitors gym occupancy, and provides business analytics — all without manual input. Features a public landing page with gym services and pricing, multi-admin role system, and complete audit trail.
 
 ---
 
@@ -64,8 +66,9 @@ A professional gym access control system using real-time AI face recognition. Id
 | **Data** | Backup all data files (members, payments, admins, logs) |
 | **Data** | Restore from any backup |
 | **Data** | Dataset normalizer utility (224×224, CLAHE, clean names) |
+| **UI** | Public landing page with gym services & membership plans |
 | **UI** | About page, Help page with FAQ |
-| **UI** | Dark theme, responsive design |
+| **UI** | Dark theme, responsive design, 16:9 compact camera view |
 
 ---
 

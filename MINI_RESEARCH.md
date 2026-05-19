@@ -38,18 +38,19 @@ Lorma Colleges | 3rd Year BSIT | May 2026
 ### Figure 1. Landing Page
 
 The first page users see when visiting the system at `http://localhost:5000`.
-Displays the **IronGate** brand, a hero headline, and a brief description of the system.
-Contains two call-to-action buttons — **Enter Admin Panel** (routes to the login form) and **Explore Features** (scrolls down the page).
+Displays the **IronGate** brand as a professional gym website with full fitness services.
 
-The landing page is divided into four sections:
-- **Hero** — system name, tagline, and key stats (VGG-Face model, 0.40 cosine threshold, 50+ photos per member, 100% local)
-- **Features** — nine feature cards covering face recognition, access control, emotion detection, member management, payments, analytics, gym floor monitoring, multi-admin roles, and backup/restore
-- **How It Works** — six numbered steps from face detection to entry logging
-- **Tech Stack** — cards for Python, Flask, DeepFace, TensorFlow, OpenCV, VGG-Face, NumPy/Pandas, Pillow, Watchdog, and JSON/CSV storage
+The landing page is divided into sections:
+- **Hero** — tagline "Your Fitness Journey Starts at the Door", key stats (<1s check-in, 24/7 access, 0 cards, 100% contactless), and Staff Login button
+- **Services** — nine cards covering the gym's offerings: Strength & Weight Training, Cardio Zone, Group Fitness Classes, Personal Training, Nutrition & Meal Plans, Protein Bar & Supplements, Body Composition Analysis, Locker Rooms & Showers, and AI Face Recognition Entry
+- **Membership Plans** — three pricing tiers: Monthly (₱1,500), Quarterly (₱3,900), Annual (₱12,000) with feature descriptions
+- **Technology** — six cards explaining the smart gym features: Instant Access Control, Attendance Analytics, Payment Tracking, Membership Freeze, Live Gym Floor, Private & Secure
+- **How It Works** — six simplified steps: Approach Camera → Face Detected → Identity Verified → Membership Checked → Access Granted → Everything Logged
+- **Tech Stack** — cards for Python, Flask, DeepFace, TensorFlow, OpenCV, VGG-Face, NumPy/Pandas, Pillow, Watchdog, JSON/CSV
 - **Team** — Group 9 members with roles
-- **CTA** — final call-to-action button linking to the admin login
+- **CTA** — "Ready to train?" with links to Staff Login and Research Paper
 
-No credentials are entered here; it simply introduces the system and routes the user to the correct login form.
+The page is always accessible (even when logged in) and serves as the public-facing gym website.
 
 ---
 
@@ -82,7 +83,7 @@ The top bar shows the system brand and the currently signed-in admin with a **Si
 
 **Expiring Soon banner** — appears automatically when any active member has ≤ 7 days left on their membership. Shows each member's name and days remaining with a link to the Members page.
 
-**Live camera feed** — streams the webcam at 640×480. Every 10 frames, the largest detected face is sent to DeepFace for identification. The result (name, access granted/denied, emotion, gender, age) is drawn as an overlay on the feed.
+**Live camera feed** — streams the webcam in a compact 16:9 widescreen frame. Every 10 frames, the largest detected face is sent to DeepFace for identification. The result (name, access granted/denied, emotion, gender, age) is drawn as an overlay on the feed.
 
 **Access banner** — appears below the feed showing the last recognition result in green (granted) or red (denied), auto-hides after 5 seconds.
 

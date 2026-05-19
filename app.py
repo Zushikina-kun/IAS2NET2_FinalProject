@@ -334,9 +334,7 @@ def generate_capture_frames(name, target=50):
 
 @app.route("/")
 def landing():
-    """Public landing page."""
-    if session.get("admin") is True:
-        return redirect(url_for("dashboard"))
+    """Public landing page — always shows, even if logged in."""
     return render_template("landing.html")
 
 

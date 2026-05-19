@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IronGate — Server Error</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --bg:#080c14; --surface:#111827; --border:#1f2d45; --accent:#f97316; --text:#f1f5f9; --muted:#4b5e7a; --red:#f87171; }
+        body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:16px; text-align:center; }
+        .code  { font-size:5rem; font-weight:800; color:var(--red); line-height:1; }
+        .msg   { font-size:1.1rem; color:var(--text); }
+        .sub   { font-size:0.82rem; color:var(--muted); max-width:400px; line-height:1.6; }
+        a { margin-top:8px; display:inline-block; padding:9px 22px; background:var(--accent); color:#fff; border-radius:7px; text-decoration:none; font-size:0.85rem; font-weight:600; }
+        a:hover { opacity:0.85; }
+    </style>
+</head>
+<body>
+    <div class="code">500</div>
+    <div class="msg">Internal Server Error</div>
+    <div class="sub">Something went wrong on our end. Try refreshing or returning to the dashboard.</div>
+    <a href="/dashboard">← Back to Dashboard</a>
+</body>
+</html>

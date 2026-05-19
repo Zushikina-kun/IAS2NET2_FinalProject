@@ -1,4 +1,4 @@
-# Gym Membership System — Technical Documentation
+# IronGate — AI Gym Access Control System — Technical Documentation
 ### IAS2 Finals Project — Group 9
 **Course:** Information Assurance and Security 2 | **Year:** 3rd Year BSIT | **SY:** 2025–2026
 

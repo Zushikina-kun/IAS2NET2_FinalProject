@@ -8,13 +8,16 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --bg:      #0b0f1a;
+            --bg:      #080c14;
+            --bg2:     #0d1220;
             --surface: #111827;
-            --border:  #1f2937;
+            --surface2:#1a2235;
+            --border:  #1f2d45;
             --accent:  #f97316;
             --green:   #22d3a5;
             --text:    #f1f5f9;
-            --muted:   #64748b;
+            --sub:     #94a3b8;
+            --muted:   #4b5e7a;
         }
 
         body {
@@ -110,18 +113,35 @@
             font-size: 0.88rem;
             text-align: center;
         }
+
+        /* ── Info banner ── */
+        .info-banner {
+            background: #f9731612;
+            border: 1px solid #f9731630;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 0.78rem;
+            color: #fdba74;
+            line-height: 1.55;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .info-banner .ii { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
     </style>
 </head>
 <body>
 
 <div class="topbar">
-    <div class="topbar-brand">🏋️ Gym <span>Membership</span> System &nbsp;/&nbsp; Face Capture</div>
+    <div class="topbar-brand">🏋️&nbsp; Iron<span>Gate</span> &nbsp;/&nbsp; Face Capture</div>
     <div class="topbar-name">Registering: <strong>{{ name }}</strong></div>
 </div>
 
 <div class="content">
 
-    <div class="camera-frame">
+    <div class="info-banner"><span class="ii">ℹ️</span><span><strong>Face Capture in Progress</strong> — Keep the member's face centered in the green box. The system captures <strong>50 photos</strong> automatically — slight angle variations improve recognition accuracy. Good lighting is essential. Do not cover the face with hats or glasses. The page redirects automatically when capture is complete.</span></div>
+<div class="camera-frame">
         <img src="/capture-stream" id="stream" alt="Camera">
     </div>
 

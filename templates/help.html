@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Help — Gym Membership System</title>
+    <title>IronGate — Help & Guide</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        :root { --bg:#0b0f1a; --surface:#111827; --border:#1f2937; --accent:#f97316; --accent2:#fb923c; --green:#22d3a5; --red:#f87171; --yellow:#fbbf24; --text:#f1f5f9; --muted:#64748b; }
+        :root { --bg:#080c14; --bg2:#0d1220; --surface:#111827; --surface2:#1a2235; --border:#1f2d45; --accent:#f97316; --accent2:#fb923c; --green:#22d3a5; --red:#f87171; --yellow:#fbbf24; --text:#f1f5f9; --sub:#94a3b8; --muted:#4b5e7a; }
         body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; }
         .topbar { display:flex; align-items:center; justify-content:space-between; padding:0 28px; height:56px; background:var(--surface); border-bottom:1px solid var(--border); }
         .topbar-brand { font-size:0.9rem; font-weight:700; letter-spacing:0.5px; text-transform:uppercase; }
@@ -32,16 +32,33 @@
         .tip-box { background:#78350f22; border:1px solid #f9731644; border-radius:8px; padding:14px 18px; margin-bottom:16px; }
         .tip-box .tip-title { font-size:0.78rem; font-weight:700; color:var(--yellow); margin-bottom:6px; }
         .tip-box p { font-size:0.82rem; color:var(--muted); line-height:1.6; }
+
+        /* ── Info banner ── */
+        .info-banner {
+            background: #f9731612;
+            border: 1px solid #f9731630;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 0.78rem;
+            color: #fdba74;
+            line-height: 1.55;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .info-banner .ii { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
     </style>
 </head>
 <body>
 <div class="topbar">
-    <div class="topbar-brand">🏋️ Gym <span>Membership</span> System &nbsp;/&nbsp; Help</div>
+    <div class="topbar-brand">🏋️&nbsp; Iron<span>Gate</span> &nbsp;/&nbsp; Help</div>
     <a href="/dashboard" class="back-link">← Dashboard</a>
 </div>
 <div class="content">
-    <div class="page-title">Help & Guide</div>
-    <div class="page-sub">Quick reference for using the Gym Membership System</div>
+    <div class="info-banner"><span class="ii">ℹ️</span><span><strong>Help & Guide</strong> — Quick reference for all IronGate features. Click any question below to expand the answer. For a full technical overview, visit the <a href="/about" style="color:var(--accent)">About</a> page.</span></div>
+<div class="page-title">Help & Guide</div>
+    <div class="page-sub">Quick reference for using IronGate — AI Gym Access Control System</div>
 
     <div class="tip-box">
         <div class="tip-title">💡 Quick Tip</div>

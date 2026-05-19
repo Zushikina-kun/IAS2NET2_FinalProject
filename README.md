@@ -170,7 +170,8 @@ IAS2NET2_FinalProject/
 
 | URL | Description | Access |
 |-----|-------------|--------|
-| `/` | Login page | Public |
+| `/` | Landing page (public) | Public |
+| `/login` | Admin login | Public |
 | `/dashboard` | Live camera + stats | All admins |
 | `/members` | Member list with search | All admins |
 | `/members/add` | Register new member | All admins |

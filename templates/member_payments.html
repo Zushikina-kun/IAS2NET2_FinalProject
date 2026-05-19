@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment History — Gym Membership System</title>
+    <title>IronGate — Payment History</title>
     <style>
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        :root{--bg:#0b0f1a;--surface:#111827;--border:#1f2937;--accent:#f97316;--green:#22d3a5;--text:#f1f5f9;--muted:#64748b;--sub:#94a3b8}
+        :root{--bg:#080c14;--bg2:#0d1220;--surface:#111827;--surface2:#1a2235;--border:#1f2d45;--accent:#f97316;--green:#22d3a5;--text:#f1f5f9;--sub:#94a3b8;--muted:#4b5e7a}
         body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
         .topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:56px;background:var(--surface);border-bottom:1px solid var(--border)}
         .topbar-brand{font-size:0.9rem;font-weight:700;letter-spacing:0.5px;text-transform:uppercase}.topbar-brand span{color:var(--accent)}
@@ -24,15 +24,32 @@
         tbody tr:last-child td{border-bottom:none}
         .amount{color:var(--green);font-weight:600}
         .empty{text-align:center;padding:32px;color:var(--muted);font-size:0.85rem}
+
+        /* ── Info banner ── */
+        .info-banner {
+            background: #f9731612;
+            border: 1px solid #f9731630;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 0.78rem;
+            color: #fdba74;
+            line-height: 1.55;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .info-banner .ii { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
     </style>
 </head>
 <body>
 <div class="topbar">
-    <div class="topbar-brand">🏋️ Gym <span>Membership</span> System &nbsp;/&nbsp; Payment History</div>
+    <div class="topbar-brand">🏋️&nbsp; Iron<span>Gate</span> &nbsp;/&nbsp; Payment History</div>
     <a href="/payments" class="back-link">← All Payments</a>
 </div>
 <div class="content">
-    <div class="header">
+    <div class="info-banner"><span class="ii">ℹ️</span><span><strong>Member Payment History</strong> — All recorded payments for this member. The total shown is the sum of all transactions. To add a new payment, go to <a href="/payments/add" style="color:var(--accent)">Record Payment</a> and select this member.</span></div>
+<div class="header">
         <img src="/member-photo/{{ member.folder_name }}" alt="{{ member.full_name }}">
         <div>
             <h1>{{ member.full_name }}</h1>

@@ -3,22 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics — Gym Membership System</title>
+    <title>IronGate — Analytics</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --bg:      #0b0f1a;
+            --bg:      #080c14;
+            --bg2:     #0d1220;
             --surface: #111827;
-            --border:  #1f2937;
+            --surface2:#1a2235;
+            --border:  #1f2d45;
             --accent:  #f97316;
             --accent2: #fb923c;
             --green:   #22d3a5;
             --red:     #f87171;
             --yellow:  #fbbf24;
             --text:    #f1f5f9;
-            --muted:   #64748b;
             --sub:     #94a3b8;
+            --muted:   #4b5e7a;
         }
 
         body {
@@ -181,18 +183,35 @@
         }
         .summary-num { font-size: 1.8rem; font-weight: 700; line-height: 1; }
         .summary-label { font-size: 0.7rem; color: var(--muted); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* ── Info banner ── */
+        .info-banner {
+            background: #f9731612;
+            border: 1px solid #f9731630;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 0.78rem;
+            color: #fdba74;
+            line-height: 1.55;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .info-banner .ii { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
     </style>
 </head>
 <body>
 
 <div class="topbar">
-    <div class="topbar-brand">🏋️ Gym <span>Membership</span> System &nbsp;/&nbsp; Analytics</div>
+    <div class="topbar-brand">🏋️&nbsp; Iron<span>Gate</span> &nbsp;/&nbsp; Analytics</div>
     <a href="/dashboard" class="back-link">← Dashboard</a>
 </div>
 
 <div class="content">
 
-    <div class="page-header">
+    <div class="info-banner"><span class="ii">ℹ️</span><span><strong>Analytics</strong> — Auto-generated insights from the entry log. The daily chart shows the last 30 days of granted/denied entries. The hourly chart reveals peak gym hours (highlighted in green). Top Visitors ranks members by total granted entries. Emotion Breakdown shows detected emotions across all sessions.</span></div>
+<div class="page-header">
         <h1>Attendance Analytics</h1>
         <p>Insights from entry log data — last 30 days overview</p>
     </div>

@@ -332,7 +332,15 @@ def generate_capture_frames(name, target=50):
 
 # ── Auth routes ───────────────────────────────────────────────────────────────
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/")
+def landing():
+    """Public landing page."""
+    if is_logged_in():
+        return redirect(url_for("dashboard"))
+    return render_template("landing.html")
+
+
+@app.route("/login", methods=["GET", "POST"])
 def login():
     if is_logged_in():
         return redirect(url_for("dashboard"))
@@ -428,7 +436,7 @@ def delete_admin(username):
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("login"))
+    return redirect(url_for("landing"))
 
 
 # ── Main pages ────────────────────────────────────────────────────────────────
@@ -1314,7 +1322,7 @@ def not_found(_e):
 
 @app.errorhandler(500)
 def internal_error(_e):
-    return render_template("404.html"), 500
+    return render_template("500.html"), 500
 
 
 # ── Context processor for CSRF-like token ─────────────────────────────────────

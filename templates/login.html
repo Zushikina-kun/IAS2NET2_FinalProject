@@ -3,18 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login — Gym Membership System</title>
+    <title>IronGate — Login</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --bg:      #0b0f1a;
+            --bg:      #080c14;
+            --bg2:     #0d1220;
             --surface: #111827;
-            --border:  #1f2937;
+            --surface2:#1a2235;
+            --border:  #1f2d45;
             --accent:  #f97316;
             --accent2: #fb923c;
+            --accent-dim:#f9731618;
+            --green:   #22d3a5;
             --text:    #f1f5f9;
-            --muted:   #64748b;
+            --sub:     #94a3b8;
+            --muted:   #4b5e7a;
             --error:   #f87171;
         }
 
@@ -26,6 +31,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            background-image: radial-gradient(ellipse 80% 60% at 50% 0%, #f9731610 0%, transparent 70%);
         }
 
         .login-wrap {
@@ -130,6 +136,16 @@
             color: var(--muted);
             margin-top: 20px;
         }
+        .back-home {
+            display: block;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-decoration: none;
+            margin-top: 14px;
+            transition: color 0.15s;
+        }
+        .back-home:hover { color: var(--text); }
     </style>
 </head>
 <body>
@@ -137,8 +153,8 @@
 <div class="login-wrap">
     <div class="logo">
         <div class="logo-icon">🏋️</div>
-        <div class="logo-title">Gym <span>Membership</span> System</div>
-        <div class="logo-sub">Group 9 — IAS2 Finals Project</div>
+        <div class="logo-title">Iron<span>Gate</span></div>
+        <div class="logo-sub">AI Gym Access Control · Group 9</div>
     </div>
 
     <div class="card">
@@ -169,8 +185,10 @@
         </div>
     </div>
 
+    <a href="/" class="back-home">← Back to Home</a>
+
     <div class="footer-note">
-        Directo · Quimson · Madayag &nbsp;|&nbsp; Gym Membership System
+        Directo · Quimson · Madayag &nbsp;|&nbsp; IronGate
     </div>
 </div>
 

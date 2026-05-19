@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entry Log — Gym Membership System</title>
+    <title>IronGate — Entry Log</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --bg:      #0b0f1a;
+            --bg:      #080c14;
+            --bg2:     #0d1220;
             --surface: #111827;
-            --border:  #1f2937;
+            --surface2:#1a2235;
+            --border:  #1f2d45;
             --accent:  #f97316;
             --green:   #22d3a5;
             --red:     #f87171;
             --text:    #f1f5f9;
-            --muted:   #64748b;
             --sub:     #94a3b8;
+            --muted:   #4b5e7a;
         }
 
         body {
@@ -131,18 +133,35 @@
             color: var(--muted);
             font-size: 0.85rem;
         }
+
+        /* ── Info banner ── */
+        .info-banner {
+            background: #f9731612;
+            border: 1px solid #f9731630;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 0.78rem;
+            color: #fdba74;
+            line-height: 1.55;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .info-banner .ii { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
     </style>
 </head>
 <body>
 
 <div class="topbar">
-    <div class="topbar-brand">🏋️ Gym <span>Membership</span> System &nbsp;/&nbsp; Entry Log</div>
+    <div class="topbar-brand">🏋️&nbsp; Iron<span>Gate</span> &nbsp;/&nbsp; Entry Log</div>
     <a href="/dashboard" class="back-link">← Dashboard</a>
 </div>
 
 <div class="content">
 
-    <div class="page-header">
+    <div class="info-banner"><span class="ii">ℹ️</span><span><strong>Entry Log</strong> — Every face recognition event is recorded here automatically. Filter by date using the date picker. <em>Granted</em> = active member identified. <em>Denied</em> = expired, suspended, frozen, or unknown face. Use <em>Export CSV</em> to download records. <em>Clear Log</em> permanently deletes all entries.</span></div>
+<div class="page-header">
         <div>
             <h1>Entry Log</h1>
             <p>All gym entry attempts — granted and denied — logged automatically.</p>

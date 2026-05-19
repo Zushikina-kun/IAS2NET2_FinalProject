@@ -5,5 +5,12 @@
     "role": "superadmin",
     "full_name": "System Administrator",
     "created_at": "2026-05-18 21:56:33"
+  },
+  {
+    "username": "zushikina",
+    "password_hash": "df306cd85c971845531b99bec9590db636d4e46dd2ee84474af462e40fd5a07d",
+    "role": "superadmin",
+    "full_name": "Brix Arquisal Directo",
+    "created_at": "2026-05-19 11:20:52"
   }
 ]

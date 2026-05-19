@@ -14,12 +14,14 @@ __pycache__/
 
 # DeepFace cache
 dataset/*.pkl
+dataset/**/*.pkl
 
 # Backups (local data, not for repo)
 backups/
 
-# Entry log (generated at runtime)
+# Runtime data (generated during use)
 entry_log.csv
+audit_log.csv
 
 # OS files
 Thumbs.db

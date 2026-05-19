@@ -117,5 +117,22 @@
     "address": "",
     "emergency_contact": "",
     "notes": ""
+  },
+  {
+    "folder_name": "lloydaa",
+    "full_name": "Lloyd AA",
+    "membership_type": "monthly",
+    "status": "active",
+    "start_date": "2026-05-19",
+    "expiry_date": "2026-06-19",
+    "contact": "",
+    "email": "",
+    "total_visits": 0,
+    "registered_at": "2026-05-19 00:00:00",
+    "gender": "",
+    "birthday": "",
+    "address": "",
+    "emergency_contact": "",
+    "notes": ""
   }
 ]

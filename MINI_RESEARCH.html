@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Research — IronGate | Group 9</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Times+New+Roman&family=Calibri:wght@400;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+    font-size: 12pt;
+    line-height: 1.6;
+    color: #111;
+    background: #e8e8e8;
+  }
+
+  .page {
+    width: 8.5in;
+    min-height: 11in;
+    margin: 24px auto;
+    background: #fff;
+    padding: 1in 1.2in 1in 1.2in;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+    page-break-after: always;
+  }
+
+  /* ── Cover page ── */
+  .cover {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 9in;
+    gap: 0;
+  }
+  .cover .school { font-size: 11pt; color: #444; margin-bottom: 6px; }
+  .cover .logo-box {
+    width: 90px; height: 90px;
+    background: linear-gradient(135deg, #f97316, #c2410c);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.8rem;
+    margin: 20px auto;
+  }
+  .cover h1 { font-size: 22pt; font-weight: 700; line-height: 1.2; margin-bottom: 8px; }
+  .cover h1 span { color: #f97316; }
+  .cover .subtitle { font-size: 13pt; color: #555; margin-bottom: 32px; }
+  .cover .members-label { font-size: 10pt; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .cover .members { font-size: 12pt; font-weight: 600; line-height: 1.8; margin-bottom: 32px; }
+  .cover .course { font-size: 11pt; color: #444; margin-bottom: 4px; }
+  .cover .submitted { font-size: 11pt; color: #444; margin-bottom: 4px; }
+  .cover .instructor { font-size: 11pt; font-weight: 600; margin-bottom: 4px; }
+  .cover .date { font-size: 11pt; color: #444; margin-top: 24px; }
+
+  /* ── TOC ── */
+  .toc h2 { font-size: 16pt; font-weight: 700; margin-bottom: 20px; border-bottom: 2px solid #f97316; padding-bottom: 6px; }
+  .toc-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 5px 0;
+    border-bottom: 1px dotted #ccc;
+    font-size: 11pt;
+  }
+  .toc-item .toc-title { color: #222; }
+  .toc-item .toc-page { color: #888; font-size: 10pt; min-width: 30px; text-align: right; }
+
+  /* ── Content pages ── */
+  .section-label {
+    font-size: 9pt;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #f97316;
+    margin-bottom: 6px;
+  }
+  h2.fig-title {
+    font-size: 14pt;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: #111;
+  }
+  h2.fig-title span { color: #f97316; }
+
+  .fig-placeholder {
+    width: 100%;
+    background: #f8f9fa;
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    margin: 16px 0;
+    color: #9ca3af;
+    font-size: 10pt;
+    text-align: center;
+    min-height: 200px;
+  }
+  .fig-placeholder .ph-icon { font-size: 2.5rem; margin-bottom: 8px; }
+  .fig-placeholder .ph-label { font-size: 9pt; font-weight: 600; color: #6b7280; }
+  .fig-placeholder .ph-url { font-size: 8pt; color: #9ca3af; font-family: monospace; margin-top: 4px; }
+
+  .fig-caption {
+    font-size: 9pt;
+    color: #6b7280;
+    text-align: center;
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  p { margin-bottom: 10px; font-size: 11pt; line-height: 1.65; }
+  ul { margin: 8px 0 12px 20px; }
+  ul li { font-size: 11pt; margin-bottom: 4px; line-height: 1.55; }
+  code {
+    background: #f3f4f6;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 10pt;
+    color: #c2410c;
+  }
+  strong { font-weight: 700; }
+  em { font-style: italic; }
+
+  .info-box {
+    background: #fff7ed;
+    border-left: 4px solid #f97316;
+    padding: 10px 14px;
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+    font-size: 10.5pt;
+    color: #7c2d12;
+  }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 12px 0; }
+  .col-box {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 12px 14px;
+  }
+  .col-box h4 { font-size: 10pt; font-weight: 700; color: #f97316; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .col-box ul { margin-left: 14px; }
+  .col-box li { font-size: 10pt; margin-bottom: 3px; }
+
+  /* ── CV pages ── */
+  .cv-name { font-size: 16pt; font-weight: 700; margin-bottom: 4px; }
+  .cv-section { margin-top: 18px; }
+  .cv-section h3 {
+    font-size: 10pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #f97316;
+    border-bottom: 1px solid #f97316;
+    padding-bottom: 3px;
+    margin-bottom: 8px;
+  }
+  .cv-section p, .cv-section li { font-size: 11pt; margin-bottom: 4px; }
+  .cv-section ul { margin-left: 18px; }
+
+  /* ── Print ── */
+  @media print {
+    body { background: #fff; }
+    .page { margin: 0; box-shadow: none; page-break-after: always; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════
+     COVER PAGE
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="cover">
+    <div class="school">Lorma Colleges &nbsp;|&nbsp; College of Information Technology</div>
+    <div class="logo-box">🏋️</div>
+    <h1>Iron<span>Gate</span></h1>
+    <div class="subtitle">AI-Powered Gym Access Control System</div>
+    <div class="subtitle" style="font-size:11pt;color:#888;margin-top:-20px;margin-bottom:28px;">
+      Technology Behind Smart Gym Entry
+    </div>
+    <div class="members-label">Group Members</div>
+    <div class="members">
+      Directo, Brix A.<br>
+      Quimson, Jibreel A.<br>
+      Madayag, Djaunathan Albert S.
+    </div>
+    <div class="course"><strong>Information Assurance and Security 2 (IAS2)</strong></div>
+    <div class="submitted">Submitted to</div>
+    <div class="instructor">*(Instructor Name)*, MTS</div>
+    <div class="course">Instructor</div>
+    <div class="date">May 2026</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     TABLE OF CONTENTS
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="toc">
+    <h2>Table of Contents</h2>
+    <div class="toc-item"><span class="toc-title">Figure 1 &nbsp; Landing Page</span><span class="toc-page">3</span></div>
+    <div class="toc-item"><span class="toc-title">Figure 2 &nbsp; Admin Login Page</span><span class="toc-page">4</span></div>
+    <div class="toc-item"><span class="toc-title">Figure 3 &nbsp; Dashboard</span><span class="toc-page">5</span></div>
+    <div class="toc-item"><span class="toc-title">Figure 4 &nbsp; Members Page</span><span class="toc-page">6</span></div>
+    <div class="toc-item"><span class="toc-title">Figure 5 &nbsp; Add Member &amp; Face Capture</span><span class="toc-page">7</span></div>
+    <div class="toc-item"><span class="toc-title">Figure 6 &nbsp; Member Profile</span><span class="toc-page">8</span></div>
+    <div class="toc-item"><span class="toc-title">Figure 7 &nbsp; Entry Log</span><span class="toc-page">9</span></div>
+    <div class="toc-item"><span class="toc-title">Figure 8 &nbsp; Gym Floor — Live Occupancy</span><span class="toc-page">10</span></div>
+    <div class="toc-item"><span class="toc-title">Figure 9 &nbsp; Payments</span><span class="toc-page">11</span></div>
+    <div class="toc-item"><span class="toc-title">Figure 10 &nbsp; Analytics</span><span class="toc-page">12</span></div>
+    <div class="toc-item"><span class="toc-title">Figure 11 &nbsp; Backups</span><span class="toc-page">13</span></div>
+    <div class="toc-item"><span class="toc-title">Figure 12 &nbsp; Audit Log</span><span class="toc-page">14</span></div>
+    <div class="toc-item"><span class="toc-title">Figure 13 &nbsp; Admin Accounts</span><span class="toc-page">15</span></div>
+    <div class="toc-item"><span class="toc-title">Figure 14 &nbsp; Help &amp; About</span><span class="toc-page">16</span></div>
+    <div class="toc-item"><span class="toc-title">Curriculum Vitae</span><span class="toc-page">17</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     FIGURE 1 — LANDING PAGE
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-label">PRELIM</div>
+  <h2 class="fig-title">Figure 1. <span>Landing Page</span></h2>
+
+  <div class="fig-placeholder">
+    <div class="ph-icon">🖼️</div>
+    <div class="ph-label">Screenshot — Landing Page</div>
+    <div class="ph-url">http://localhost:5000/</div>
+  </div>
+  <div class="fig-caption">Figure 1. The IronGate landing page at <code>/</code></div>
+
+  <p>The first page users see when visiting the system at <code>http://localhost:5000</code>. Displays the <strong>IronGate</strong> brand, a hero headline, and a brief description of the system. Contains two call-to-action buttons — <strong>Enter Admin Panel</strong> (routes to the login form) and <strong>Explore Features</strong> (scrolls down the page).</p>
+
+  <p>The landing page is divided into five sections:</p>
+  <ul>
+    <li><strong>Hero</strong> — system name, tagline, and key stats (VGG-Face model, 0.40 cosine threshold, 50+ photos per member, 100% local — no cloud)</li>
+    <li><strong>Features</strong> — nine feature cards covering face recognition, access control, emotion detection, member management, payments, analytics, gym floor monitoring, multi-admin roles, and backup/restore</li>
+    <li><strong>How It Works</strong> — six numbered steps from face detection to entry logging</li>
+    <li><strong>Tech Stack</strong> — cards for Python, Flask, DeepFace, TensorFlow, OpenCV, VGG-Face, NumPy/Pandas, Pillow, Watchdog, and JSON/CSV storage</li>
+    <li><strong>Team &amp; CTA</strong> — Group 9 members with roles and a final call-to-action button linking to the admin login</li>
+  </ul>
+
+  <div class="info-box">No credentials are entered here. The landing page is fully public and simply introduces the system, routing the user to the correct login form.</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     FIGURE 2 — LOGIN PAGE
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <h2 class="fig-title">Figure 2. <span>Admin Login Page</span></h2>
+
+  <div class="fig-placeholder">
+    <div class="ph-icon">🖼️</div>
+    <div class="ph-label">Screenshot — Admin Login Page</div>
+    <div class="ph-url">http://localhost:5000/login</div>
+  </div>
+  <div class="fig-caption">Figure 2. The admin login form at <code>/login</code></div>
+
+  <p>Located at <code>/login</code>. The only entry point into the admin panel. Displays the <strong>IronGate</strong> logo, a username field, and a password field.</p>
+
+  <ul>
+    <li>Successful login redirects to the Dashboard</li>
+    <li>Failed attempts increment a per-IP counter</li>
+    <li>After <strong>5 failed attempts</strong>, the IP is locked out for <strong>5 minutes</strong> — a message shows the remaining lockout time</li>
+    <li>Sessions expire automatically after <strong>2 hours of inactivity</strong></li>
+    <li>Passwords are hashed with <strong>SHA-256</strong> — never stored in plaintext</li>
+    <li>A <em>← Back to Home</em> link returns to the landing page</li>
+  </ul>
+
+  <div class="info-box">
+    <strong>Default credentials on first run:</strong><br>
+    Username: <code>admin</code> &nbsp;|&nbsp; Password: <code>admin123</code>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     FIGURE 3 — DASHBOARD
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <h2 class="fig-title">Figure 3. <span>Dashboard</span></h2>
+
+  <div class="fig-placeholder">
+    <div class="ph-icon">🖼️</div>
+    <div class="ph-label">Screenshot — Dashboard</div>
+    <div class="ph-url">http://localhost:5000/dashboard</div>
+  </div>
+  <div class="fig-caption">Figure 3. The live dashboard at <code>/dashboard</code></div>
+
+  <p>The main control panel after login. The top bar shows the system brand and the currently signed-in admin with a <strong>Sign Out</strong> link.</p>
+
+  <div class="two-col">
+    <div class="col-box">
+      <h4>Stats Row (7 cards)</h4>
+      <ul>
+        <li>Total Members</li>
+        <li>Active Members</li>
+        <li>Expired Members</li>
+        <li>Suspended Members</li>
+        <li>Today's Entries</li>
+        <li>Granted Today</li>
+        <li>Denied Today</li>
+      </ul>
+    </div>
+    <div class="col-box">
+      <h4>Side Navigation</h4>
+      <ul>
+        <li>Members</li>
+        <li>Entry Log</li>
+        <li>Gym Floor</li>
+        <li>Payments</li>
+        <li>Analytics</li>
+        <li>Register Face</li>
+        <li>Backups, Audit Log</li>
+        <li>Admin Accounts</li>
+        <li>Help, About</li>
+      </ul>
+    </div>
+  </div>
+
+  <p>The <strong>live camera feed</strong> streams the webcam at 640×480. Every 10 frames, the largest detected face is sent to DeepFace for identification. The result — name, access granted/denied, emotion, gender, age — is drawn as an overlay on the feed and shown in the access banner below it. Stats auto-refresh every 5 seconds.</p>
+</div>
+
+<!-- FIGURE 4 — MEMBERS -->
+<div class="page">
+  <h2 class="fig-title">Figure 4. <span>Members Page</span></h2>
+  <div class="fig-placeholder"><div class="ph-icon">🖼️</div><div class="ph-label">Screenshot — Members Page</div><div class="ph-url">http://localhost:5000/members</div></div>
+  <div class="fig-caption">Figure 4. The members list at <code>/members</code></div>
+  <p>Full list of all registered gym members. The search bar filters by name, membership type, status, contact number, or email in real time.</p>
+  <p><strong>Table columns:</strong> row number, profile photo, full name, membership type (Monthly / Quarterly / Annual), status (Active / Expired / Suspended / Frozen), start date, expiry date, days left (red ≤7d, yellow ≤30d, green otherwise), total visits, contact number, and action buttons.</p>
+  <p><strong>Action buttons per member:</strong> View profile, Edit details, 📷 Add more face photos, 💰 Payment history, ❄️ Freeze/Unfreeze, Suspend/Renew, and Remove (with confirmation). Membership status auto-updates on page load — expired dates are detected and status is set to Expired automatically.</p>
+</div>
+
+<!-- FIGURE 5 — ADD MEMBER & FACE CAPTURE -->
+<div class="page">
+  <h2 class="fig-title">Figure 5. <span>Add Member &amp; Face Capture</span></h2>
+  <div class="fig-placeholder"><div class="ph-icon">🖼️</div><div class="ph-label">Screenshot — Add Member Form</div><div class="ph-url">http://localhost:5000/members/add</div></div>
+  <div class="fig-caption">Figure 5a. Add Member form at <code>/members/add</code></div>
+  <p>A two-section form: <strong>Basic info</strong> (full name, membership type, status, start/expiry dates — expiry auto-calculates) and <strong>Personal info</strong> (gender, birthday, address, contact, email, emergency contact, notes). After saving, the system generates a folder name and redirects to Face Capture.</p>
+  <div class="fig-placeholder"><div class="ph-icon">🖼️</div><div class="ph-label">Screenshot — Face Capture</div><div class="ph-url">http://localhost:5000/capture-stream</div></div>
+  <div class="fig-caption">Figure 5b. Face capture progress page</div>
+  <p>The webcam opens and automatically captures <strong>50 face photos</strong> when a face is detected. Each photo is cropped, resized to <strong>224×224 px</strong>, and enhanced with <strong>CLAHE</strong> before saving to <code>dataset/&lt;FolderName&gt;/</code>. A progress bar shows the count. The page redirects to Members automatically when done.</p>
+</div>
+
+<!-- FIGURE 6 — MEMBER PROFILE -->
+<div class="page">
+  <h2 class="fig-title">Figure 6. <span>Member Profile</span></h2>
+  <div class="fig-placeholder"><div class="ph-icon">🖼️</div><div class="ph-label">Screenshot — Member Profile</div><div class="ph-url">http://localhost:5000/members/profile/&lt;name&gt;</div></div>
+  <div class="fig-caption">Figure 6. Member profile at <code>/members/profile/&lt;folder_name&gt;</code></div>
+  <p><strong>Profile header:</strong> photo, full name, status pill, membership type, photo count, join date, and action buttons (Edit Member, Add More Photos).</p>
+  <p><strong>Stats row (4 cards):</strong> Total Entries (granted), Denied, Total Visits, Face Photos.</p>
+  <p><strong>Details grid:</strong> Membership Details (type, status, dates, folder name) and Contact Information (phone, email, emergency contact, gender, birthday, address, notes).</p>
+  <p><strong>Recent Entry History:</strong> table of the last 50 access attempts showing timestamp, access result (Granted/Denied), deny reason, detected emotion, and confidence score.</p>
+</div>
+
+<!-- FIGURE 7 — ENTRY LOG -->
+<div class="page">
+  <h2 class="fig-title">Figure 7. <span>Entry Log</span></h2>
+  <div class="fig-placeholder"><div class="ph-icon">🖼️</div><div class="ph-label">Screenshot — Entry Log</div><div class="ph-url">http://localhost:5000/entry-log</div></div>
+  <div class="fig-caption">Figure 7. The entry log at <code>/entry-log</code></div>
+  <p>Every face recognition event is recorded here automatically. A <strong>date filter</strong> narrows records to a specific day. Stats row shows Total, Granted, and Denied counts for the current filter.</p>
+  <p><strong>Table columns:</strong> row number, member name, timestamp, access result (color-coded pill), deny reason, detected emotion, detected gender, estimated age, confidence score (%).</p>
+  <p><strong>Export CSV</strong> downloads all visible records as a <code>.csv</code> file. <strong>Clear Log</strong> permanently deletes all entry records (with confirmation). Records are stored in <code>entry_log.csv</code> and appended automatically by the face recognition engine.</p>
+</div>
+
+<!-- FIGURE 8 — GYM FLOOR -->
+<div class="page">
+  <h2 class="fig-title">Figure 8. <span>Gym Floor — Live Occupancy</span></h2>
+  <div class="fig-placeholder"><div class="ph-icon">🖼️</div><div class="ph-label">Screenshot — Gym Floor</div><div class="ph-url">http://localhost:5000/gym-floor</div></div>
+  <div class="fig-caption">Figure 8. Live gym occupancy at <code>/gym-floor</code></div>
+  <p>Shows who is <strong>currently inside the gym</strong> in real time. Members are automatically <strong>checked in</strong> when face recognition grants them access. Each card shows the member photo, full name, check-in time, and a <strong>Check Out</strong> button.</p>
+  <p>The occupancy counter updates every 10 seconds via the <code>/api/gym-status</code> endpoint. Clicking <strong>Check Out</strong> calls <code>/api/checkout</code> and removes the member from the floor view. The check-in state is in-memory and resets when the server restarts.</p>
+</div>
+
+<!-- FIGURE 9 — PAYMENTS -->
+<div class="page">
+  <h2 class="fig-title">Figure 9. <span>Payments</span></h2>
+  <div class="fig-placeholder"><div class="ph-icon">🖼️</div><div class="ph-label">Screenshot — Payments</div><div class="ph-url">http://localhost:5000/payments</div></div>
+  <div class="fig-caption">Figure 9. Payment records at <code>/payments</code></div>
+  <p>All recorded membership payments. Summary stats show total collected (₱) and total transaction count.</p>
+  <p><strong>Table columns:</strong> row number, member name, amount (₱), payment method (Cash / GCash / Card / Bank Transfer — color-coded), description, date, recorded by (admin username).</p>
+  <p><strong>Record Payment</strong> (<code>/payments/add</code>) — form fields: member selector, amount, payment method, payment date (defaults to today), description/notes. <strong>Member Payment History</strong> (<code>/payments/member/&lt;name&gt;</code>) shows all payments for a single member with a running total. All transactions are logged in the Audit Log.</p>
+</div>
+
+<!-- FIGURE 10 — ANALYTICS -->
+<div class="page">
+  <h2 class="fig-title">Figure 10. <span>Analytics</span></h2>
+  <div class="fig-placeholder"><div class="ph-icon">🖼️</div><div class="ph-label">Screenshot — Analytics</div><div class="ph-url">http://localhost:5000/analytics</div></div>
+  <div class="fig-caption">Figure 10. Attendance analytics at <code>/analytics</code></div>
+  <p>Auto-generated insights from the entry log data. <strong>Summary stats (4 cards):</strong> Total Members, Granted (last 30 days), Denied (last 30 days), Peak Hour.</p>
+  <ul>
+    <li><strong>Daily Entries chart</strong> — bar chart of the last 30 days; hover to see exact date and counts</li>
+    <li><strong>Hourly Distribution chart</strong> — 24-bar chart showing entry volume by hour; peak hour highlighted in green</li>
+    <li><strong>Top Visitors</strong> — ranked list of the top 10 members by total granted entries with a proportional bar</li>
+    <li><strong>Emotion Breakdown</strong> — grid of detected emotions (Happy, Sad, Angry, Neutral, Fear, Disgust, Surprise) with emoji icons and counts</li>
+  </ul>
+</div>
+
+<!-- FIGURE 11 — BACKUPS -->
+<div class="page">
+  <h2 class="fig-title">Figure 11. <span>Backups</span></h2>
+  <div class="fig-placeholder"><div class="ph-icon">🖼️</div><div class="ph-label">Screenshot — Backups</div><div class="ph-url">http://localhost:5000/backups</div></div>
+  <div class="fig-caption">Figure 11. Data backup and restore at <code>/backups</code></div>
+  <p><strong>Create Backup</strong> — one click saves a timestamped snapshot of all five data files: <code>members.json</code>, <code>admins.json</code>, <code>payments.json</code>, <code>entry_log.csv</code>, <code>audit_log.csv</code>. Stored in the <code>backups/</code> folder.</p>
+  <p><strong>Backup list</strong> — shows each backup's date and the files it contains. <strong>Restore</strong> — clicking Restore overwrites the current live data files with the backup copies. A confirmation prompt prevents accidental restores. All backup and restore actions are recorded in the Audit Log.</p>
+</div>
+
+<!-- FIGURE 12 — AUDIT LOG -->
+<div class="page">
+  <h2 class="fig-title">Figure 12. <span>Audit Log</span></h2>
+  <div class="fig-placeholder"><div class="ph-icon">🖼️</div><div class="ph-label">Screenshot — Audit Log</div><div class="ph-url">http://localhost:5000/audit-log</div></div>
+  <div class="fig-caption">Figure 12. Admin audit trail at <code>/audit-log</code> (Superadmin only)</div>
+  <p>A complete, tamper-evident trail of every admin action. <strong>Table columns:</strong> row number, timestamp, admin username, action type (color-coded pill), target, details.</p>
+  <div class="two-col">
+    <div class="col-box">
+      <h4>Action Colors</h4>
+      <ul>
+        <li><span style="color:#22d3a5">■</span> member_added — green</li>
+        <li><span style="color:#f87171">■</span> member_deleted — red</li>
+        <li><span style="color:#fbbf24">■</span> payment_recorded — yellow</li>
+        <li><span style="color:#60a5fa">■</span> freeze/activate — blue</li>
+        <li><span style="color:#94a3b8">■</span> others — grey</li>
+      </ul>
+    </div>
+    <div class="col-box">
+      <h4>Security Notes</h4>
+      <ul>
+        <li>Superadmin-only access</li>
+        <li>Append-only from the UI</li>
+        <li>Cannot be cleared via interface</li>
+        <li>Thread-safe writes (locked)</li>
+        <li>Stored in <code>audit_log.csv</code></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- FIGURE 13 — ADMIN ACCOUNTS -->
+<div class="page">
+  <h2 class="fig-title">Figure 13. <span>Admin Accounts</span></h2>
+  <div class="fig-placeholder"><div class="ph-icon">🖼️</div><div class="ph-label">Screenshot — Admin Accounts</div><div class="ph-url">http://localhost:5000/register</div></div>
+  <div class="fig-caption">Figure 13. Admin account management at <code>/register</code> (Superadmin only)</div>
+  <p><strong>Left panel — Create New Admin Account:</strong> full name, username (min 3 chars), password (min 6 chars), confirm password, role selector (Staff or Superadmin). Duplicate usernames are rejected. Passwords are SHA-256 hashed before storage.</p>
+  <p><strong>Right panel — Existing Accounts:</strong> lists all admin accounts with name, role pill, username, and creation date. A <strong>Remove</strong> button deletes any account except the currently signed-in admin's own account.</p>
+  <div class="two-col">
+    <div class="col-box"><h4>Superadmin</h4><ul><li>Full access to all pages</li><li>Audit Log visibility</li><li>Admin account management</li><li>All member/payment operations</li></ul></div>
+    <div class="col-box"><h4>Staff</h4><ul><li>Manage members</li><li>View entry log &amp; analytics</li><li>Record payments</li><li>Create/restore backups</li><li>Cannot access Audit Log or Admin Accounts</li></ul></div>
+  </div>
+</div>
+
+<!-- FIGURE 14 — HELP & ABOUT -->
+<div class="page">
+  <h2 class="fig-title">Figure 14. <span>Help &amp; About</span></h2>
+  <div class="fig-placeholder"><div class="ph-icon">🖼️</div><div class="ph-label">Screenshot — Help Page</div><div class="ph-url">http://localhost:5000/help</div></div>
+  <div class="fig-caption">Figure 14a. Help &amp; FAQ at <code>/help</code></div>
+  <p>A collapsible FAQ page with 14 questions covering: adding members, recognition failures, how access control works, difference between Expired/Suspended/Frozen, renewing memberships, multi-admin setup, backups, camera troubleshooting, login lockout recovery, exporting logs, recording payments, Freeze behavior, Gym Floor, and the Audit Log. Also includes a Quick Navigation reference grid and Admin Roles comparison.</p>
+  <div class="fig-placeholder"><div class="ph-icon">🖼️</div><div class="ph-label">Screenshot — About Page</div><div class="ph-url">http://localhost:5000/about</div></div>
+  <div class="fig-caption">Figure 14b. About page at <code>/about</code></div>
+  <p>Displays the system description, full feature list, technology stack grid, development team (Group 9), and course information (IAS2, 3rd Year BSIT, Lorma Colleges, SY 2025–2026).</p>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     CURRICULUM VITAE — DIRECTO
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-label">Curriculum Vitae</div>
+  <div class="cv-name">DIRECTO, BRIX A.</div>
+
+  <div class="cv-section">
+    <h3>I. Personal Information</h3>
+    <p>Address: San Fernando, La Union</p>
+    <p>Email: brix.directo@lorma.edu</p>
+    <p>Role in Project: <strong>Group Leader</strong></p>
+  </div>
+
+  <div class="cv-section">
+    <h3>II. Educational Background</h3>
+    <ul>
+      <li><strong>Tertiary Education</strong><br>Lorma Colleges | 2022 – Present<br>Bachelor of Science in Information Technology (3rd Year, Undergraduate)</li>
+    </ul>
+  </div>
+
+  <div class="cv-section">
+    <h3>III. Awards / Citations / Recognitions Received</h3>
+    <p>N/A</p>
+  </div>
+
+  <div class="cv-section">
+    <h3>IV. Work Experience</h3>
+    <p>N/A</p>
+  </div>
+
+  <div class="cv-section">
+    <h3>V. Eligibility</h3>
+    <p>N/A</p>
+  </div>
+
+  <div class="cv-section">
+    <h3>VI. Seminars Attended</h3>
+    <p>N/A</p>
+  </div>
+
+  <div class="cv-section">
+    <h3>VII. Involvement in Research / Researches Conducted</h3>
+    <ul>
+      <li><strong>IAS2 Finals:</strong> IronGate — AI-Powered Gym Access Control System<br>
+      Face recognition using DeepFace (VGG-Face), Flask web framework, TensorFlow, OpenCV, real-time access control, emotion detection, multi-admin system, analytics dashboard.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     CURRICULUM VITAE — QUIMSON
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-label">Curriculum Vitae</div>
+  <div class="cv-name">QUIMSON, JIBREEL A.</div>
+
+  <div class="cv-section">
+    <h3>I. Personal Information</h3>
+    <p>Email: jibreel.quimson@lorma.edu</p>
+    <p>Role in Project: <strong>Member</strong></p>
+  </div>
+
+  <div class="cv-section">
+    <h3>II. Educational Background</h3>
+    <ul>
+      <li><strong>Tertiary Education</strong><br>Lorma Colleges | 2022 – Present<br>Bachelor of Science in Information Technology (3rd Year, Undergraduate)</li>
+    </ul>
+  </div>
+
+  <div class="cv-section">
+    <h3>III. Awards / Citations / Recognitions Received</h3>
+    <p>N/A</p>
+  </div>
+
+  <div class="cv-section">
+    <h3>IV. Work Experience</h3>
+    <p>N/A</p>
+  </div>
+
+  <div class="cv-section">
+    <h3>V. Eligibility</h3>
+    <p>N/A</p>
+  </div>
+
+  <div class="cv-section">
+    <h3>VI. Seminars Attended</h3>
+    <p>N/A</p>
+  </div>
+
+  <div class="cv-section">
+    <h3>VII. Involvement in Research / Researches Conducted</h3>
+    <ul>
+      <li><strong>IAS2 Finals:</strong> IronGate — AI-Powered Gym Access Control System</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     CURRICULUM VITAE — MADAYAG
+══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-label">Curriculum Vitae</div>
+  <div class="cv-name">MADAYAG, DJAUNATHAN ALBERT S.</div>
+
+  <div class="cv-section">
+    <h3>I. Personal Information</h3>
+    <p>Email: djaunathan.madayag@lorma.edu</p>
+    <p>Role in Project: <strong>Member</strong></p>
+  </div>
+
+  <div class="cv-section">
+    <h3>II. Educational Background</h3>
+    <ul>
+      <li><strong>Tertiary Education</strong><br>Lorma Colleges | 2022 – Present<br>Bachelor of Science in Information Technology (3rd Year, Undergraduate)</li>
+    </ul>
+  </div>
+
+  <div class="cv-section">
+    <h3>III. Awards / Citations / Recognitions Received</h3>
+    <p>N/A</p>
+  </div>
+
+  <div class="cv-section">
+    <h3>IV. Work Experience</h3>
+    <p>N/A</p>
+  </div>
+
+  <div class="cv-section">
+    <h3>V. Eligibility</h3>
+    <p>N/A</p>
+  </div>
+
+  <div class="cv-section">
+    <h3>VI. Seminars Attended</h3>
+    <p>N/A</p>
+  </div>
+
+  <div class="cv-section">
+    <h3>VII. Involvement in Research / Researches Conducted</h3>
+    <ul>
+      <li><strong>IAS2 Finals:</strong> IronGate — AI-Powered Gym Access Control System</li>
+    </ul>
+  </div>
+</div>
+
+</body>
+</html>

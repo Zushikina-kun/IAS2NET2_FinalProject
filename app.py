@@ -1307,6 +1307,14 @@ def about():
     return render_template("about.html")
 
 
+@app.route("/mini-research")
+def mini_research():
+    """Serve the mini research document — publicly accessible for demo/presentation."""
+    from flask import send_file
+    path = os.path.join(os.path.dirname(__file__), "MINI_RESEARCH.html")
+    return send_file(path, mimetype="text/html")
+
+
 @app.route("/help")
 @login_required
 def help_page():

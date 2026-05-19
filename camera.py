@@ -429,7 +429,7 @@ def generate_frames():
             flags=cv2.CASCADE_SCALE_IMAGE
         )
 
-        # Every 5 frames, send a face crop to the background worker
+        # Every 10 frames, send a face crop to the background worker
         with _face_queue_lock:
             busy = _worker_busy
         if frame_count % 10 == 0 and len(faces) > 0 and not busy:

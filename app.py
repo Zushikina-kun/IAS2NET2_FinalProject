@@ -335,7 +335,7 @@ def generate_capture_frames(name, target=50):
 @app.route("/")
 def landing():
     """Public landing page."""
-    if is_logged_in():
+    if session.get("admin") is True:
         return redirect(url_for("dashboard"))
     return render_template("landing.html")
 
@@ -1310,9 +1310,11 @@ def about():
 @app.route("/mini-research")
 def mini_research():
     """Serve the mini research document — publicly accessible for demo/presentation."""
-    from flask import send_file
-    path = os.path.join(os.path.dirname(__file__), "MINI_RESEARCH.html")
-    return send_file(path, mimetype="text/html")
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "MINI_RESEARCH.html")
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as f:
+            return f.read(), 200, {"Content-Type": "text/html; charset=utf-8"}
+    return redirect(url_for("landing"))
 
 
 @app.route("/help")

@@ -1,4 +1,4 @@
-# 🏋️ Gym Membership System with Face Recognition
+# 🏋️ IronGate — AI Gym Access Control System
 
 > **IAS2 Finals Project — Group 9**
 > Lorma Colleges | 3rd Year BSIT | School Year 2025–2026
@@ -186,6 +186,7 @@ IAS2NET2_FinalProject/
 | `/audit-log` | Admin action trail | Superadmin only |
 | `/register` | Manage admin accounts | Superadmin only |
 | `/register-face` | Register face for existing member | All admins |
+| `/mini-research` | Research document | Public |
 | `/help` | FAQ & user guide | All admins |
 | `/about` | System info & credits | All admins |
 
@@ -258,4 +259,4 @@ Academic project — IAS2 Finals, Lorma Colleges, SY 2025–2026.
 
 ---
 
-*Built by Group 9 — Directo, Quimson, Madayag*
+*Built by Group 9 — Directo, Quimson, Madayag | IronGate v2.0*
